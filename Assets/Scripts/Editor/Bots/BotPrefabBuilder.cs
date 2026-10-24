@@ -8,20 +8,20 @@ namespace Game.Editor.Bots
 {
     /// <summary>
     /// Generates the bot visual prefabs (<b>WheelShooter → Bots → Rebuild Prefabs</b>): a Synty
-    /// humanoid with the bot controller, root motion off, the weapon prop in the right hand and the
-    /// left hand IK'd onto it (<see cref="WeaponHandIK"/>). No gameplay components; the gameplay view
-    /// prefab nests it.
+    /// humanoid with the bot controller, root motion off, and the weapon prop held by
+    /// <see cref="WeaponHold"/>. No gameplay components; the gameplay view prefab nests it.
     /// </summary>
     /// <remarks>
     /// The grip is solved, not hand-tuned, from every frame of every held-weapon clip of the set,
-    /// in the right hand's frame (where the weapon is rigid):
+    /// in the right hand's frame:
     /// <list type="bullet">
     /// <item>the weapon's pistol grip (found on its mesh, just behind and below the trigger) sits in
     /// the right palm;</item>
-    /// <item>the grip runs along the knuckle line (index → little finger) — that fixes the roll;</item>
+    /// <item>the grip runs along the knuckle line (index → outermost finger) — that fixes the roll;</item>
     /// <item>the barrel points from the right palm to the left hand's average position (rifle), or
     /// along the back of the right hand (pistol, where the left hand wraps the right);</item>
-    /// <item>the left hand's IK target is its average pose relative to the weapon.</item>
+    /// <item>the wrists' average places on the weapon are what <see cref="WeaponHold"/> lays the
+    /// weapon between at runtime; the averaged pose itself is the rigid (dead / one-handed) hold.</item>
     /// </list>
     /// Poses are sampled on a throwaway instance, so no bone overrides end up in the prefab.
     /// </remarks>
@@ -53,7 +53,6 @@ namespace Game.Editor.Bots
             public Vector3 SocketPosition;
             public Quaternion SocketRotation;
             public Vector3 LeftHandPosition;
-            public Quaternion LeftHandRotation;
         }
 
         private static void Build(BotAnimationSet set, string weaponPath, bool supportHandOnBarrel)
@@ -81,25 +80,23 @@ namespace Game.Editor.Bots
                 animator.applyRootMotion = false;
                 animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
 
-                var socket = new GameObject("WeaponSocket").transform;
-                socket.SetParent(animator.GetBoneTransform(HumanBodyBones.RightHand), false);
-                socket.localPosition = grip.SocketPosition;
-                socket.localRotation = grip.SocketRotation;
+                // Not under the hand bone: WeaponHold poses it every frame from both hands.
+                var hand = animator.GetBoneTransform(HumanBodyBones.RightHand);
+                var pivot = new GameObject("Weapon").transform;
+                pivot.SetParent(model.transform, false);
+                pivot.SetPositionAndRotation(hand.TransformPoint(grip.SocketPosition), hand.rotation * grip.SocketRotation);
 
-                var prop = (GameObject)PrefabUtility.InstantiatePrefab(weapon, socket);
-                prop.name = "Weapon";
+                var prop = (GameObject)PrefabUtility.InstantiatePrefab(weapon, pivot);
+                prop.name = weapon.name;
 
                 foreach (var collider in prop.GetComponentsInChildren<Collider>(true))
                 {
                     Object.DestroyImmediate(collider);
                 }
 
-                var leftHand = new GameObject("LeftHandGrip").transform;
-                leftHand.SetParent(socket, false);
-                leftHand.localPosition = grip.LeftHandPosition;
-                leftHand.localRotation = grip.LeftHandRotation;
-
-                model.AddComponent<WeaponHandIK>().LeftHandTarget = leftHand;
+                var rightWrist = Quaternion.Inverse(grip.SocketRotation) * -grip.SocketPosition;
+                model.AddComponent<WeaponHold>().Configure(
+                    pivot, supportHandOnBarrel, grip.SocketPosition, grip.SocketRotation, rightWrist, grip.LeftHandPosition);
 
                 PrefabUtility.SaveAsPrefabAsset(root, PathOf(set));
             }
@@ -160,7 +157,10 @@ namespace Game.Editor.Bots
                 var animator = probe.GetComponent<Animator>();
                 var hand = animator.GetBoneTransform(HumanBodyBones.RightHand);
                 var index = animator.GetBoneTransform(HumanBodyBones.RightIndexProximal);
-                var little = animator.GetBoneTransform(HumanBodyBones.RightLittleProximal);
+                // The outermost finger the rig has: Synty hands are index + one merged finger.
+                var little = animator.GetBoneTransform(HumanBodyBones.RightLittleProximal)
+                    ?? animator.GetBoneTransform(HumanBodyBones.RightRingProximal)
+                    ?? animator.GetBoneTransform(HumanBodyBones.RightMiddleProximal);
                 var support = animator.GetBoneTransform(HumanBodyBones.LeftHand);
 
                 // Everything in the right hand's frame, averaged over the samples.
@@ -168,7 +168,7 @@ namespace Game.Editor.Bots
                 var gripAxis = Vector3.zero;
                 var backOfHand = Vector3.zero;
                 var supportPosition = Vector3.zero;
-                var supportRotations = new List<Quaternion>();
+                var count = 0;
 
                 foreach (var clip in clips)
                 {
@@ -181,11 +181,10 @@ namespace Game.Editor.Bots
                         gripAxis += hand.InverseTransformDirection(little.position - index.position).normalized;
                         backOfHand += hand.InverseTransformDirection(knuckles - hand.position).normalized;
                         supportPosition += hand.InverseTransformPoint(support.position);
-                        supportRotations.Add(Quaternion.Inverse(hand.rotation) * support.rotation);
+                        count++;
                     }
                 }
 
-                var count = supportRotations.Count;
                 palm /= count;
                 supportPosition /= count;
 
@@ -203,28 +202,12 @@ namespace Game.Editor.Bots
                     SocketPosition = socketPosition,
                     SocketRotation = socketRotation,
                     LeftHandPosition = toSocket * (supportPosition - socketPosition),
-                    LeftHandRotation = toSocket * Average(supportRotations),
                 };
             }
             finally
             {
                 Object.DestroyImmediate(probe);
             }
-        }
-
-        private static Quaternion Average(List<Quaternion> rotations)
-        {
-            var sum = Vector4.zero;
-            var reference = rotations[0];
-
-            foreach (var rotation in rotations)
-            {
-                var sign = Quaternion.Dot(rotation, reference) < 0f ? -1f : 1f;
-                sum += new Vector4(rotation.x, rotation.y, rotation.z, rotation.w) * sign;
-            }
-
-            sum.Normalize();
-            return new Quaternion(sum.x, sum.y, sum.z, sum.w);
         }
     }
 }

@@ -104,16 +104,18 @@ namespace Game.Tests.EditMode.Features.Bots
             Assert.That(animator.runtimeAnimatorController, Is.Not.Null);
             Assert.That(animator.applyRootMotion, Is.False, "ECS owns the bot's movement");
             Assert.That(animator.avatar.isHuman, Is.True);
-            Assert.That(animator.GetBoneTransform(HumanBodyBones.RightHand).Find("WeaponSocket/Weapon"), Is.Not.Null);
             Assert.That(prefab.GetComponentsInChildren<Collider>(true), Is.Empty, "visual only — hitboxes are gameplay's");
 
             var behaviours = prefab.GetComponentsInChildren<MonoBehaviour>(true);
-            Assert.That(behaviours.Length, Is.EqualTo(1), "visual only — nothing but the hand IK");
-            var ik = behaviours[0] as WeaponHandIK;
-            Assert.That(ik, Is.Not.Null);
-            Assert.That(ik.gameObject, Is.SameAs(animator.gameObject), "OnAnimatorIK only reaches the Animator's own GameObject");
-            Assert.That(ik.LeftHandTarget, Is.Not.Null);
-            Assert.That(ik.LeftHandTarget.IsChildOf(animator.GetBoneTransform(HumanBodyBones.RightHand)), Is.True, "the target rides the weapon");
+            Assert.That(behaviours.Length, Is.EqualTo(1), "visual only — nothing but the weapon hold");
+            var hold = behaviours[0] as WeaponHold;
+            Assert.That(hold, Is.Not.Null);
+            Assert.That(hold.gameObject, Is.SameAs(animator.gameObject), "OnAnimatorIK only reaches the Animator's own GameObject");
+            Assert.That(hold.Weapon, Is.Not.Null);
+            Assert.That(hold.Weapon.GetComponentInChildren<MeshRenderer>(), Is.Not.Null);
+            Assert.That(hold.Weapon.IsChildOf(animator.GetBoneTransform(HumanBodyBones.RightHand)), Is.False,
+                "the hold poses the weapon itself; under a hand bone the hand would drag it");
+            Assert.That(hold.TwoHanded, Is.EqualTo(path.Contains("Rifle")));
         }
 
         private static void AssertParameter(Dictionary<string, AnimatorControllerParameter> parameters, string name, AnimatorControllerParameterType type)
