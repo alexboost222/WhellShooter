@@ -81,9 +81,28 @@ A walled compound on a square **cell grid**. The cell is **2.5 m**, the module o
   mesh bounds, so kits with different pivots (PolygonGeneric pivots on a corner) need no per-prefab
   offsets — only a per-kind yaw offset where a mesh faces a different way (stairs).
 - **Ground** is not a piece: one flat quad under the arena and its outskirts
-  (`MapConfig.GroundMaterial`, a triplanar grass) over one box collider. Synty's ground tiles come
+  (`MapConfig.GroundMaterial`, a triplanar grass). Synty's ground tiles come
   in mismatched sizes and bumps that poke through interior floors; a plane is also the cheapest
   thing to draw on mobile. Interior floors sit `MapGenerator.FloorLift` (2 cm) above it.
+- **Collision** (`Utils/MapCollision`, `Systems/MapBodiesSystem`) — phys-r static boxes built from
+  the layout, never from meshes (Docs/11). The view strips every prefab collider. On each
+  generation the old arena's `MapBody` entities are tagged `Destroy` and one `BodyCreateRequest`
+  entity per box is made; Bodies creates them in the same tick's physics step. Nominal sizes are
+  in `Constants/MapCollisionSizes`:
+
+  | Piece | Collision |
+  |---|---|
+  | Ground | one 1 m slab, top at y = 0, out past the outskirts |
+  | Wall / border wall | 2.5 × 3 × 0.22 m per storey |
+  | Door | posts + lintel, opening 1.2 × 2.2 m |
+  | Window | posts, sill to 1 m, lintel from 2.2 m — shoot through, not walk through |
+  | Pillar | 0.42 × 3 × 0.42 m |
+  | Roof | one 0.2 m slab per building, top at 3 m |
+  | Parapet / cover wall | 2.5 × 1.5 × 0.22 m |
+  | Stairs | 9 solid steps of 0.33 m (under the character's 0.35 m step height) |
+  | Cover low / high, interior prop | 1 m / 1.7 m / 1 m cubes |
+
+  Floors, ceilings and the outskirts' scenery have none: flush with the ground, or out of reach.
 
 ### Entry points
 
@@ -301,24 +320,28 @@ side has an edge the other cannot have:
 | `Character` | spawner | tag: this entity is a body |
 | `CharacterIntent` | the driver (input, bot brain) | `Move` (local strafe/forward, ≤ 1), `Sprint`, `Fire`, `Aim`; `JumpPressed` / `FirePressed` are **latches** — set by the driver, cleared by the fixed-tick consumer, so a tap shorter than a tick still counts |
 | `Look` | the driver, directly | yaw/pitch, radians, Unity convention (+pitch looks down); the authority, not a delta |
-| `CharacterMotion` | the motor | feet position, previous position (interpolation), velocity, grounded, sprinting; `Jumps` / `Landings` are **counters**, never cleared, so a view reacts to the difference whatever number of ticks ran between two frames |
+| `CharacterMotion` | `CharacterMotionSystem` (AfterPhysics) | feet position, previous position (interpolation), velocity, grounded, sprinting; `Jumps` / `Landings` are **counters**, never cleared, so a view reacts to the difference whatever number of ticks ran between two frames |
 | `CharacterTeleportRequest` | anyone (respawn) | consumed before the motor: moves, stops, levels the view, snaps interpolation |
-| `CharacterViewLink` | the driver's view hydration | link to the prefab root's `CharacterView` (controller + `Head`) |
+| `CharacterViewLink` | the driver's view hydration | link to the prefab root's `CharacterView` (root + `Head`; no collider) |
 
 - **Movement is steered by yaw only.** Looking up and walking forward never lifts the body.
 - **Sprint** needs the button and forward input (> 0.5) and is dropped by aiming or firing.
-- **The head is placed every frame in world space**: feet interpolated with
-  `TimeService.InterpolationAlpha`, plus eye height, rotated by `Look`. Inheriting it from the
-  root would inherit the root's tick-rate stepping.
-- **Motor: `CharacterController`, a placeholder.** It is the only thing that knows one exists;
-  the phys-r character (Docs/05) replaces it behind the same components.
+- **The view is placed every frame in world space**: the root at the feet interpolated with
+  `TimeService.InterpolationAlpha`, facing the heading; the head at eye height above, rotated by
+  `Look`. Nothing is stepped at the tick rate.
+- **Motor: the phys-r character controller** (Docs/11), Quake-style ground/air acceleration,
+  step climbing (0.35 m), ground snapping. `CharacterBodySpawnSystem` gives every new body its
+  capsule (`CharacterCreateRequest` from `CharacterConfig`); `CharacterMotorSystem` turns intent +
+  look into `PhysicsCharacterInput` (aim = a speed cap of aim / walk); the capsule moves in the
+  physics step; `CharacterMotionSystem` copies `PhysicsCharacterState` into `CharacterMotion` in
+  `AfterPhysics`, the same tick. Teleports become `PhysicsTeleportRequest`.
 
 | Tuning (`CharacterConfig`) | Default | Why |
 |---|---|---|
-| Capsule height / radius | 1.8 / 0.35 m | set on the controller at hydration; hitscan tests the same numbers |
+| Capsule height / radius | 1.8 / 0.35 m | the phys-r capsule; hitscan tests the same numbers |
 | Eye height | 1.6 m | camera and shot origin |
 | Walk / sprint / aim speed | 4.5 / 7 / 2.8 m/s | sprint ≈ 1.5× walk; aiming slows to a deliberate pace |
-| Ground / air acceleration | 45 / 8 m/s² | ~0.1 s to full speed on foot; a jump commits you |
+| Ground / air acceleration | 45 / 8 m/s² | ~0.1 s to full speed on foot; a jump commits you. phys-r takes them as acceleration ÷ walk speed (Quake units) |
 | Jump height | 1.1 m | clears a 1 m block |
 | Gravity | 22 m/s² | 9.81 feels floaty in a shooter |
 

@@ -76,14 +76,11 @@ namespace Features.Map.Utils
             var instance = Object.Instantiate(prefab, position, rotation, group);
             instance.transform.localScale = scale;
 
-            if (set.StripColliders)
+            // Views carry no colliders (Docs/11): the arena's collision is phys-r statics built from
+            // the layout (MapCollision). Immediate, so nothing ever sees them.
+            foreach (var collider in instance.GetComponentsInChildren<Collider>())
             {
-                // Immediate, not Destroy: a deferred destroy would leave the collider in the physics
-                // step that may run before the end of the frame.
-                foreach (var collider in instance.GetComponentsInChildren<Collider>())
-                {
-                    Object.DestroyImmediate(collider);
-                }
+                Object.DestroyImmediate(collider);
             }
         }
 
@@ -131,7 +128,7 @@ namespace Features.Map.Utils
         private void AddGround(MapLayout layout, Transform root)
         {
             // One flat plane under everything, out past the outskirts: cheap to draw on mobile and
-            // nothing to trip over. The slab collider under it is what the player walks on.
+            // nothing to trip over. What the player walks on is MapCollision's ground slab.
             var margin = layout.CellSize * (_config.Settings.OutskirtsRings + 2);
             var size = new Vector2(layout.Width * layout.CellSize + margin * 2f, layout.Depth * layout.CellSize + margin * 2f);
 
@@ -145,12 +142,6 @@ namespace Features.Map.Utils
             {
                 ground.GetComponent<MeshRenderer>().sharedMaterial = _config.GroundMaterial;
             }
-
-            var slab = new GameObject("GroundCollider");
-            slab.transform.SetParent(root, false);
-            var box = slab.AddComponent<BoxCollider>();
-            box.size = new Vector3(size.x, 1f, size.y);
-            box.center = new Vector3(0f, -0.5f, 0f);
         }
     }
 }

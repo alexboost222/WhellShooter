@@ -40,6 +40,21 @@ namespace Engine.Tests.EditMode.Runtime
         }
 
         [Test]
+        public void FixedTick_RunsAfterPhysicsSteps_AfterThePhysicsHook()
+        {
+            _runner.Add(RunnerPhase.AfterPhysics, Step("readback"));
+            _runner.Add(RunnerPhase.FixedUpdate, Step("system"));
+            _runner.PhysicsHook = Step("physics");
+            _runner.Initialize();
+
+            _runner.FixedTick(0.02f);
+            _runner.FrameTick(0.016f);
+            _runner.LateFrameTick(0.016f);
+
+            Assert.That(_order, Is.EqualTo(new[] { "system", "physics", "readback" }));
+        }
+
+        [Test]
         public void FixedTick_DoesNotRunFramePhases()
         {
             _runner.Add(RunnerPhase.Update, Step("view"));

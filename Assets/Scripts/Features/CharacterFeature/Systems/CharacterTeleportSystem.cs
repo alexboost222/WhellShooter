@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Engine.DI;
+using Features.Bodies.Components;
 using Features.CharacterFeature.Components;
 using Features.CharacterFeature.Utils;
 using Scellecs.Morpeh;
@@ -12,16 +13,17 @@ namespace Features.CharacterFeature.Systems
     /// and snaps interpolation so the camera does not sweep across the map.
     /// </summary>
     /// <remarks>
-    /// A <c>CharacterController</c> overwrites a transform written behind its back on its next
-    /// move, so the controller is switched off around the write. A body with no view yet just gets
-    /// the new position; its view is built there.
+    /// A body that already has its phys-r capsule is moved there by a
+    /// <see cref="PhysicsTeleportRequest"/> in this tick's physics step; one that doesn't yet gets
+    /// its capsule created at the new position.
     /// </remarks>
     public sealed class CharacterTeleportSystem : ISystem
     {
         [Inject] private Stash<CharacterTeleportRequest> _characterTeleportRequest;
         [Inject] private Stash<CharacterMotion> _characterMotion;
         [Inject] private Stash<Look> _look;
-        [Inject] private Stash<CharacterViewLink> _characterViewLink;
+        [Inject] private Stash<PhysicsCharacter> _physicsCharacter;
+        [Inject] private Stash<PhysicsTeleportRequest> _physicsTeleportRequest;
 
         public World World { get; set; }
 
@@ -60,12 +62,9 @@ namespace Features.CharacterFeature.Systems
                     _look.Set(entity, new Look { Yaw = LookMath.WrapAngle(request.Yaw) });
                 }
 
-                if (_characterViewLink.Has(entity))
+                if (_physicsCharacter.Has(entity))
                 {
-                    var controller = _characterViewLink.Get(entity).View.Controller;
-                    controller.enabled = false;
-                    controller.transform.position = request.Position;
-                    controller.enabled = true;
+                    _physicsTeleportRequest.Set(entity, new PhysicsTeleportRequest { Feet = request.Position });
                 }
 
                 _done.Add(entity);

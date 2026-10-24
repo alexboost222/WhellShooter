@@ -18,6 +18,7 @@ namespace Engine.Runtime
     ///   bus.BeginPhase(FixedUpdate)        queues swap; frozen for the phase
     ///   FixedUpdate steps                  simulation
     ///   PhysicsHook                        PhysicsStep: phys-r world step (Docs/11)
+    ///   AfterPhysics steps                 physics result → gameplay state, same tick
     ///
     /// FrameTick(frameDelta)                every frame
     ///   bus.FlushPush()                    the one push-delivery point
@@ -148,6 +149,7 @@ namespace Engine.Runtime
             Collect(into, _initializers, "Initializer");
             Collect(into, _phases[(int)RunnerPhase.FixedUpdate], RunnerPhase.FixedUpdate.ToString());
             Collect(into, _physics, "Physics");
+            Collect(into, _phases[(int)RunnerPhase.AfterPhysics], RunnerPhase.AfterPhysics.ToString());
             Collect(into, _phases[(int)RunnerPhase.Update], RunnerPhase.Update.ToString());
             Collect(into, _phases[(int)RunnerPhase.LateUpdate], RunnerPhase.LateUpdate.ToString());
         }
@@ -197,6 +199,7 @@ namespace Engine.Runtime
 
                 Run(RunnerPhase.FixedUpdate, deltaTime);
                 Run(_physics, deltaTime);
+                Run(RunnerPhase.AfterPhysics, deltaTime);
             }
         }
 

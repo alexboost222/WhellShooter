@@ -7,20 +7,15 @@ namespace Features.CharacterFeature.Providers
     /// No logic.
     /// </summary>
     /// <remarks>
-    /// The root carries the <see cref="CharacterController"/>, which the motor moves on the fixed
-    /// tick. The <see cref="Head"/> is placed every frame from the interpolated position and
-    /// <c>Look</c> — in world space, so it never inherits the root's tick-rate stepping.
+    /// No collider: the body is a phys-r capsule (Docs/11). The root and the <see cref="Head"/> are
+    /// placed every frame from the interpolated position and <c>Look</c>, in world space.
     /// </remarks>
     [DisallowMultipleComponent]
     public sealed class CharacterView : MonoBehaviour
     {
-        [Tooltip("The capsule the motor moves. On this object.")]
-        [SerializeField] private CharacterController controller;
-
         [Tooltip("Placed at eye height and rotated by Look every frame. The player's camera lives under it.")]
         [SerializeField] private Transform head;
 
-        public CharacterController Controller => controller;
         public Transform Head => head;
     }
 }

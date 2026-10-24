@@ -15,6 +15,7 @@ namespace Features.Map
             AddInitializer(Container.NewAndRegister<MapStorage>());
 
             AddSystem(RunnerPhase.FixedUpdate, Container.New<MapGenerateSystem>());
+            AddSystem(RunnerPhase.FixedUpdate, Container.New<MapBodiesSystem>());
             AddSystem(RunnerPhase.Update, Container.New<MapViewSystem>());
         }
     }

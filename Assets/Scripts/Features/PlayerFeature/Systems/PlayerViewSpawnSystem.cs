@@ -4,7 +4,6 @@ using Features.CharacterFeature.Configs;
 using Features.PlayerFeature.Components;
 using Features.PlayerFeature.Configs;
 using Scellecs.Morpeh;
-using UnityEngine;
 
 namespace Features.PlayerFeature.Systems
 {
@@ -13,9 +12,8 @@ namespace Features.PlayerFeature.Systems
     /// body whose view died with a scene gets a fresh one.
     /// </summary>
     /// <remarks>
-    /// The capsule is sized from <see cref="CharacterConfig"/> here rather than trusted from the
-    /// prefab: hitscan tests against those numbers, and a collider that disagreed with them would be
-    /// hit where nothing is drawn.
+    /// The view carries no collider: the body is a phys-r capsule sized from <c>CharacterConfig</c>
+    /// by <c>CharacterBodySpawnSystem</c> (Docs/11).
     /// </remarks>
     public sealed class PlayerViewSpawnSystem : ISystem
     {
@@ -24,7 +22,6 @@ namespace Features.PlayerFeature.Systems
         [Inject] private Stash<CharacterViewLink> _characterViewLink;
 
         [Inject] private PlayerConfig _config;
-        [Inject] private CharacterConfig _characterConfig;
         [Inject] private PlayerViewFactory _factory;
 
         public World World { get; set; }
@@ -51,11 +48,6 @@ namespace Features.PlayerFeature.Systems
             {
                 ref var motion = ref _characterMotion.Get(entity);
                 var view = _factory.Build(_config.ViewPrefab, motion.Position, _look.Get(entity).Heading);
-
-                var controller = view.Controller;
-                controller.height = _characterConfig.Height;
-                controller.radius = _characterConfig.Radius;
-                controller.center = new Vector3(0f, _characterConfig.Height * 0.5f, 0f);
 
                 // Nothing to blend from: the view starts where the body is.
                 motion.PreviousPosition = motion.Position;

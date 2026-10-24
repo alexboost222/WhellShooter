@@ -57,10 +57,14 @@ PhysicsHook = PhysicsStep
   PhysicsWorld.Step()
   after:  CharacterReadbackSystem   native state → PhysicsCharacterState
           BodyReadbackSystem        native pose → BodyPose (dynamic / kinematic bodies)
+AfterPhysics steps                  other features turn the result into gameplay state
+                                    (CharacterMotionSystem: PhysicsCharacterState → CharacterMotion)
 ```
 
 So a request made in tick *N* exists in the world for tick *N*'s step, input written in tick *N*
-moves the character in tick *N*, and what systems read in tick *N+1* is the result of tick *N*.
+moves the character in tick *N*, and `AfterPhysics` systems — and views that frame — already see
+tick *N*'s result. `RunnerPhase.AfterPhysics` is the generic place for that; nothing in it should
+move bodies, which waits for the next step anyway.
 
 ## Components (`Features/Bodies/Components`)
 
@@ -111,8 +115,8 @@ occluder wants. For the raw API (batched rays, rewinds, sweeps, overlaps) use
 ## Rules
 
 - **No `UnityEngine.Physics`, `Rigidbody`, `CharacterController` or `Collider` in game code.**
-  Views carry no colliders; level geometry becomes static bodies from data (the map layout),
-  never from baked scene colliders. `Physics.simulationMode` stays `Script` and nothing calls
+  Views carry no colliders; level geometry becomes static bodies from data — the arena's come from
+  `MapLayout` via `Features/Map` (`MapCollision`, Docs/08) — never from baked scene colliders. `Physics.simulationMode` stays `Script` and nothing calls
   `Physics.Simulate`, so a stray collider is inert.
 - Nothing touches the native world outside the physics groups, except **read-only queries**
   from systems (raycasts between steps are fine — the world isn't mid-step).

@@ -17,8 +17,12 @@ namespace Features.CharacterFeature
     {
         public override void Register()
         {
+            AddSystem(RunnerPhase.FixedUpdate, Container.New<CharacterBodySpawnSystem>());
             AddSystem(RunnerPhase.FixedUpdate, Container.New<CharacterTeleportSystem>());
             AddSystem(RunnerPhase.FixedUpdate, Container.New<CharacterMotorSystem>());
+
+            // phys-r moves the capsule in the physics step (Docs/11); read it back the same tick.
+            AddSystem(RunnerPhase.AfterPhysics, Container.New<CharacterMotionSystem>());
 
             AddSystem(RunnerPhase.Update, Container.New<CharacterViewSweepSystem>());
             AddSystem(RunnerPhase.Update, Container.New<CharacterHeadSystem>());

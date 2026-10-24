@@ -4,7 +4,7 @@ using Unity.Mathematics;
 namespace Features.CharacterFeature.Utils
 {
     /// <summary>
-    /// The motor's decisions as pure functions, so they are tested without a CharacterController.
+    /// The motor's decisions as pure functions, so they are tested without a physics world.
     /// </summary>
     public static class CharacterMovement
     {
@@ -35,6 +35,23 @@ namespace Features.CharacterFeature.Utils
             var current = new float3(velocity.x, 0f, velocity.z);
 
             return Springs.MoveTowards(current, new float3(wish.x, 0f, wish.z), acceleration * deltaTime);
+        }
+
+        /// <summary>
+        /// phys-r's speed cap while aiming: the fraction of walk speed (phys-r shortens the wish vector).
+        /// </summary>
+        public static float AimSpeedScale(float aimSpeed, float walkSpeed)
+        {
+            return walkSpeed > 0f ? math.saturate(aimSpeed / walkSpeed) : 1f;
+        }
+
+        /// <summary>
+        /// A linear acceleration (m/s², how fast velocity reaches walk speed) as phys-r's Quake-style
+        /// one (1/s, which phys-r multiplies by the wanted speed): the same time to reach walk speed.
+        /// </summary>
+        public static float QuakeAccel(float acceleration, float walkSpeed)
+        {
+            return walkSpeed > 0f ? acceleration / walkSpeed : acceleration;
         }
 
         /// <summary>Take-off speed for a jump that peaks at <paramref name="height"/>.</summary>

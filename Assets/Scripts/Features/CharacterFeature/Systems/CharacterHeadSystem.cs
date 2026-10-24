@@ -8,13 +8,12 @@ using Unity.Mathematics;
 namespace Features.CharacterFeature.Systems
 {
     /// <summary>
-    /// Places every body's head each frame: its feet interpolated between the last two fixed ticks,
-    /// plus eye height, rotated by <see cref="Look"/>.
+    /// Places every body's view each frame: the root at its feet interpolated between the last two
+    /// fixed ticks, facing its heading, and the head at eye height above, rotated by <see cref="Look"/>.
     /// </summary>
     /// <remarks>
-    /// <b>World space, from components, every frame.</b> Inheriting from the root would inherit the
-    /// root's fixed-tick stepping (the controller moves it on the tick), and the camera would judder
-    /// at any frame rate that is not the tick rate.
+    /// <b>World space, from components, every frame</b> — never stepped at the tick rate, so the camera
+    /// doesn't judder at any frame rate that is not the tick rate.
     /// </remarks>
     public sealed class CharacterHeadSystem : ISystem
     {
@@ -49,10 +48,12 @@ namespace Features.CharacterFeature.Systems
             foreach (var entity in _filter)
             {
                 ref var motion = ref _characterMotion.Get(entity);
-                var head = _characterViewLink.Get(entity).View.Head;
+                var view = _characterViewLink.Get(entity).View;
+                var look = _look.Get(entity);
 
                 var feet = math.lerp(motion.PreviousPosition, motion.Position, alpha);
-                head.SetPositionAndRotation(feet + new float3(0f, _config.EyeHeight, 0f), _look.Get(entity).Rotation);
+                view.transform.SetPositionAndRotation(feet, look.Heading);
+                view.Head.SetPositionAndRotation(feet + new float3(0f, _config.EyeHeight, 0f), look.Rotation);
             }
         }
     }

@@ -1,3 +1,4 @@
+using Features.Bodies.Components;
 using Features.CharacterFeature.Components;
 using Features.CharacterFeature.Systems;
 using NUnit.Framework;
@@ -47,6 +48,20 @@ namespace Game.Tests.EditMode.Features.Character
             Assert.That(_world.Get<Look>(body).Yaw, Is.EqualTo(2f).Within(1e-5f));
             Assert.That(_world.Get<Look>(body).Pitch, Is.EqualTo(0f));
             Assert.That(_world.Has<CharacterTeleportRequest>(body), Is.False);
+            Assert.That(_world.Has<PhysicsTeleportRequest>(body), Is.False, "no capsule yet: it is created there");
+        }
+
+        [Test]
+        public void ABodyWithACapsule_AsksPhysicsToMoveIt()
+        {
+            var body = _world.World.CreateEntity();
+            _world.Set(body, new CharacterMotion());
+            _world.Set(body, new PhysicsCharacter { Handle = 1 });
+            _world.Set(body, new CharacterTeleportRequest { Position = new float3(10f, 0f, -4f) });
+
+            _world.Tick(0.02f);
+
+            Assert.That(_world.Get<PhysicsTeleportRequest>(body).Feet, Is.EqualTo(new float3(10f, 0f, -4f)));
         }
     }
 }
