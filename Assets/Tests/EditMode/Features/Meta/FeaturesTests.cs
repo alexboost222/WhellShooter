@@ -2,9 +2,12 @@ using Engine.Configs;
 using Engine.DI;
 using Engine.Ecs;
 using Engine.Messages;
+using Engine.Net;
 using Engine.Runtime;
 using NUnit.Framework;
+using Features.Network.Configs;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Game.Tests.EditMode.Features.Meta
 {
@@ -25,7 +28,7 @@ namespace Game.Tests.EditMode.Features.Meta
             _runner = new Runner(bus);
 
             var container = new Container();
-            var catalog = new ConfigCatalog(new Config[0]);
+            var catalog = new ConfigCatalog(new Config[] { ScriptableObject.CreateInstance<NetConfig>() });
             container.Register(catalog);
             container.Register(_world);
             container.Register(bus);
@@ -33,6 +36,7 @@ namespace Game.Tests.EditMode.Features.Meta
             container.AddResolver(new ConfigResolver(catalog));
             container.AddResolver(new StashResolver(_world));
             container.AddResolver(new MessagePipeResolver(bus));
+            container.Register<INetTransport>(new LoopbackNetwork().CreateServer());
 
             global::Meta.Features.Register(container, _runner);
             _runner.Initialize();

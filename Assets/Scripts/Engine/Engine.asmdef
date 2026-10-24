@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "Scellecs.Morpeh",
+        "LiteNetLib",
         "UniTask",
         "Unity.Mathematics",
         "UnityEngine.UI",

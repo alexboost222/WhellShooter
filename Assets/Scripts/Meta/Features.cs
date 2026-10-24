@@ -3,6 +3,7 @@ using Engine.Diagnostics;
 using Engine.Diagnostics.Logs;
 using Engine.Runtime;
 using Features.DestroyFeature;
+using Features.Network;
 
 namespace Meta
 {
@@ -58,6 +59,10 @@ namespace Meta
 
         private static void Registrations()
         {
+            // ---- infrastructure ----
+            // Server: tick, receive, consume input, send. Client: receive, tick, sample + send input.
+            Register<NetworkFeature>();
+
             // ---- gameplay ----
 
             // ---- last ----

@@ -30,6 +30,7 @@ where it applies:
 | `02-engine` | DI, message bus, UI framework (MVVM / `Bindable<T>`), module list |
 | `03-ecs` | Morpeh conventions: features, systems, patterns |
 | `04-persistence` | saves, prefs |
+| `05-netcode` | transport, ticks, input redundancy, client tick sync |
 | `06-meta-runner` | bootstrap, GameState flow, Runner, ticks & time |
 | `08-gameplay` | **what the game does**: feature roster, tuning numbers |
 | `09-roadmap-and-open-design` | **not law** — unsettled design, open questions |
@@ -110,7 +111,10 @@ supplies only what the folder path doesn't (`Engine` asmdef → empty).
   `FixedUpdate` (simulation + manual `Physics.Simulate`, `SimulationMode.Script`)
   / `Update` (views) / `LateUpdate` (only when an Animator fights the view).
   Morpeh commits after each system. Game code never touches the Unity loop.
-  The fixed step is Unity's own (`ProjectSettings/TimeManager`); the Runner
+  Ticks are **not** Unity's `FixedUpdate`: `UnityRunnerDriver.Update` feeds
+  the frame's unscaled delta into a `TickAccumulator` and runs 0..N ticks,
+  capped at `MaxTicksPerFrame` (excess dropped — no death spiral). Tick length
+  = `Time.fixedDeltaTime` (`ProjectSettings/TimeManager`, 50 Hz); the Runner
   keeps no clock.
 - **No `Time.*` / `Random.*` statics in systems** — inject `TimeService` /
   the seeded random service. (Neither exists yet: `TimeService` was
@@ -156,6 +160,10 @@ Ported from dacha (adapted: no netcode, no metrics, no TimeService):
 `ConfigCatalog`, `ConfigResolver`, `ConfigIds`), `Engine/Ecs` (`EcsFeature`,
 `StashResolver`, `SystemsGroupStep`, `Destroy`), `Engine/Disposables`, and a
 minimal `Engine/Diagnostics` (`Log`, `Guard`, `MainThread`).
+Own: `Engine/Net` (`INetTransport`, `LiteNetTransport`, `LoopbackNetwork`,
+`LinkConditioner`), `Engine/Runtime/TickAccumulator`, `Features/Network`
+(server/client tick sync + input delivery, Docs/05). MPPM 2.0: main editor =
+server, virtual players = clients.
 `Meta/Bootstrap.cs` is the composition root; `Meta/Features.cs` is the ordered
 feature list, with `EntitiesDestroyFeature` last.
 

@@ -3,7 +3,10 @@ using Engine.DI;
 using Engine.Diagnostics.Logs;
 using Engine.Ecs;
 using Engine.Messages;
+using Engine.Net;
 using Engine.Runtime;
+using Features.Network.Configs;
+using Features.Network.Providers;
 using Scellecs.Morpeh;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -34,6 +37,7 @@ namespace Meta
         private static World _world;
         private static Runner _runner;
         private static UnityRunnerDriver _driver;
+        private static INetTransport _transport;
 
         /// <summary>The live container, for tests and tooling only. Null outside play mode.</summary>
         internal static Container Container => _container;
@@ -69,6 +73,10 @@ namespace Meta
             _container.AddResolver(new ConfigResolver(catalog));
             _container.AddResolver(new StashResolver(_world));
             _container.AddResolver(new MessagePipeResolver(bus));
+
+            // Network: the transport decides the role; the network feature starts it, Shutdown disposes it.
+            _transport = _container.Register(NetComposition.CreateTransport(catalog.Get<NetConfig>()));
+            _container.Register<IPlayerInputSource>(new InputSystemPlayerInputSource());
 
             // 4. Features, in Features.cs order. A feature injects only what earlier ones registered.
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -118,10 +126,12 @@ namespace Meta
                 _driver.Uninstall();
             }
 
+            _transport?.Dispose();
             UnityConsoleSink.Flush();
             _world?.Dispose();
 
             _driver = null;
+            _transport = null;
             _runner = null;
             _world = null;
             _container = null;
