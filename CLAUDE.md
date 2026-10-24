@@ -20,7 +20,7 @@ demo, dedicated server, procedural runs between safe zones.
 
 ## Docs first
 
-Architecture is designed docs-first in **`Docs/`** (not yet created). Each area
+Architecture is designed docs-first in **`Docs/`**. Each area
 gets its doc **before** its first implementation, mirroring dacha's numbering
 where it applies:
 
