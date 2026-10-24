@@ -51,6 +51,16 @@ namespace Features.Network.Configs
         [Tooltip("Client packets per loss-rate window on the server.")]
         public int LossWindow = 100;
 
+        [Header("Replication")]
+        [Tooltip("Ticks remote bodies are drawn behind the newest snapshot.")]
+        public int InterpolationDelayTicks = 3;
+
+        [Tooltip("Prediction error below this is left alone, metres.")]
+        public float CorrectionEpsilon = 0.01f;
+
+        [Tooltip("Prediction error above this teleports the local body (a respawn), metres.")]
+        public float SnapDistance = 2f;
+
         [Header("Logging")]
         public bool LogEveryInput;
         public int StatsIntervalTicks = 50;

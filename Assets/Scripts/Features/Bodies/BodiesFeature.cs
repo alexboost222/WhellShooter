@@ -22,6 +22,7 @@ namespace Features.Bodies
                 Container.New<PhysicsReleaseSystem>(),
                 Container.New<PhysicsCreateSystem>(),
                 Container.New<CharacterTeleportSystem>(),
+                Container.New<CharacterCorrectionSystem>(),
                 Container.New<CharacterInputSystem>());
 
             var after = CreateStep("PhysicsAfter",

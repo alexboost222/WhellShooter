@@ -2,6 +2,7 @@ using Engine.Ecs;
 using Engine.Physics;
 using Engine.Runtime;
 using Features.Combat.Systems;
+using Features.Network.Systems;
 
 namespace Features.Combat
 {
@@ -21,6 +22,12 @@ namespace Features.Combat
             AddSystem(RunnerPhase.FixedUpdate, Container.New<HitscanSystem>());
             AddSystem(RunnerPhase.FixedUpdate, Container.New<DamageApplySystem>());
             AddSystem(RunnerPhase.FixedUpdate, Container.New<DeadIntentSystem>());
+
+            // Lag compensation: where every body stood, for the shots of players who saw it late.
+            if (Container.Resolve<NetRole>().IsServer)
+            {
+                AddSystem(RunnerPhase.AfterPhysics, Container.New<BodyHistorySystem>());
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ using Engine.Net;
 using Engine.Runtime;
 using Features.Network.Configs;
 using Features.Network.Providers;
+using Features.Network.Systems;
 using Scellecs.Morpeh;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -86,7 +87,9 @@ namespace Meta
 
             // Network: the transport decides the role; the network feature starts it, Shutdown disposes it.
             _transport = _container.Register(NetComposition.CreateTransport(catalog.Get<NetConfig>()));
-            _container.Register<IPlayerInputSource>(new InputSystemPlayerInputSource());
+            // The player feature fills it every frame, the client tick samples it (Docs/05 §Input).
+            var input = _container.Register(new LocalInputBuffer());
+            _container.Register<IPlayerInputSource>(input);
 
             // 4. Features, in Features.cs order. A feature injects only what earlier ones registered.
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

@@ -11,6 +11,7 @@ using Features.Map.Configs;
 using Features.Map.Messages;
 using Features.Map.Systems;
 using Features.Map.Utils;
+using Features.Network.Systems;
 using NUnit.Framework;
 using Scellecs.Morpeh;
 using UnityEngine;
@@ -49,6 +50,7 @@ namespace Game.Tests.EditMode.Features.Map
             _container.AddResolver(new StashResolver(_world));
             _container.AddResolver(new MessagePipeResolver(bus));
 
+            _container.Register(new NetRole(true));
             new MapFeature().Install(_container, _runner);
             new EntitiesDestroyFeature().Install(_container, _runner);
             _runner.Initialize();

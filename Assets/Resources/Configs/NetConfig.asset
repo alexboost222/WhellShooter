@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: NetConfig
   m_EditorClassIdentifier: Game::Features.Network.Configs.NetConfig
   Mode: 0
-  Address: 127.0.0.1
+  Address: 10.170.4.49
   Port: 7779
   ConnectionKey: WheelShooter
   MaxInputsPerPacket: 64

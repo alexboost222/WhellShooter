@@ -32,6 +32,7 @@ namespace Features.WeaponsFeature.Systems
         [Inject] private Stash<Look> _look;
         [Inject] private Stash<Weapon> _weapon;
         [Inject] private Stash<ShotRequest> _shotRequest;
+        [Inject] private Stash<ShotRewind> _shotRewind;
 
         [Inject] private WeaponsConfig _config;
         [Inject] private CharacterConfig _characterConfig;
@@ -94,6 +95,7 @@ namespace Features.WeaponsFeature.Systems
                         Origin = motion.Position + new float3(0f, _characterConfig.EyeHeight, 0f),
                         Direction = look.Forward,
                         WeaponId = weapon.ConfigId,
+                        RewindTicks = _shotRewind.Has(entity) ? _shotRewind.Get(entity).Ticks : 0,
                     });
                 }
 

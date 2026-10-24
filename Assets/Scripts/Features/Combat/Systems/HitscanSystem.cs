@@ -6,6 +6,7 @@ using Features.Combat.Components;
 using Features.Combat.Messages;
 using Features.Combat.Utils;
 using Features.WeaponsFeature.Components;
+using Features.Network.Systems;
 using Features.WeaponsFeature.Configs;
 using Scellecs.Morpeh;
 using Unity.Mathematics;
@@ -25,14 +26,20 @@ namespace Features.Combat.Systems
     /// Runs one tick after the shot was fired (Combat is listed before the weapon so it can silence
     /// the dead before the motor runs) — 20 ms at 50 Hz, and the same for every shooter.
     /// </para>
+    /// <para>
+    /// Net (Docs/05): a shot with <see cref="ShotRequest.RewindTicks"/> is tested against the bodies'
+    /// <see cref="BodyHistory"/>; on a client it is traced only — no <see cref="Damage"/>.
+    /// </para>
     /// </remarks>
     public sealed class HitscanSystem : ISystem
     {
         [Inject] private Stash<ShotRequest> _shotRequest;
         [Inject] private Stash<CharacterMotion> _characterMotion;
+        [Inject] private Stash<BodyHistory> _bodyHistory;
         [Inject] private Stash<Damage> _damage;
 
         [Inject] private IPublisher<ShotTraced> _shotTraced;
+        [Inject] private NetRole _role;
         [Inject] private IShotOccluder _occluder;
         [Inject] private CharacterConfig _characterConfig;
         [Inject] private WeaponsConfig _weaponsConfig;
@@ -92,7 +99,7 @@ namespace Features.Combat.Systems
                     continue;
                 }
 
-                var feet = _characterMotion.Get(body).Position;
+                var feet = FeetAt(body, shot.RewindTicks);
                 if (CapsuleRay.Intersect(shot.Origin, direction, feet, _characterConfig.Height, _characterConfig.Radius,
                         out var distance) && distance < reach)
                 {
@@ -109,7 +116,8 @@ namespace Features.Combat.Systems
                 HitBody = victim != null,
             });
 
-            if (victim == null)
+            // A client's shot is a prediction: the tracer is drawn, the server decides the hit.
+            if (victim == null || _role.IsClient)
             {
                 return;
             }
@@ -122,6 +130,25 @@ namespace Features.Combat.Systems
                 Origin = shot.Origin,
                 Direction = direction,
             });
+        }
+
+        /// <summary>Where the body stood <paramref name="rewind"/> steps ago, as far back as its history goes.</summary>
+        private float3 FeetAt(Entity body, int rewind)
+        {
+            if (rewind <= 0 || !_bodyHistory.Has(body))
+            {
+                return _characterMotion.Get(body).Position;
+            }
+
+            var history = _bodyHistory.Get(body);
+            if (history.Count == 0)
+            {
+                return _characterMotion.Get(body).Position;
+            }
+
+            var back = math.min(rewind, history.Count - 1);
+            var index = (history.Cursor - 1 - back + BodyHistory.Capacity) % BodyHistory.Capacity;
+            return history.Feet[index];
         }
     }
 }

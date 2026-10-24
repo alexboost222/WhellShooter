@@ -4,7 +4,7 @@ using Features.Network.Enums;
 
 namespace Features.Network.Utils
 {
-    /// <summary>Wire format of the two packets (Docs/05). Little-endian, first byte <see cref="PacketType"/>.</summary>
+    /// <summary>Wire format of <c>Sync</c> and <c>Input</c> (Docs/05); <c>Snapshot</c> is <c>SnapshotPacket</c>'s. Little-endian, first byte <see cref="PacketType"/>.</summary>
     public static class Packets
     {
         public const int InputHeaderSize = 1 + 4 + 4 + 1;
@@ -54,9 +54,10 @@ namespace Features.Network.Utils
         {
             writer.WriteSByte(input.MoveX);
             writer.WriteSByte(input.MoveY);
-            writer.WriteShort(input.LookYaw);
+            writer.WriteUShort(input.LookYaw);
             writer.WriteShort(input.LookPitch);
             writer.WriteByte(input.Buttons);
+            writer.WriteByte(input.ViewDelay);
         }
 
         public static PlayerInput ReadInput(ref PacketReader reader)
@@ -65,9 +66,10 @@ namespace Features.Network.Utils
             {
                 MoveX = reader.ReadSByte(),
                 MoveY = reader.ReadSByte(),
-                LookYaw = reader.ReadShort(),
+                LookYaw = reader.ReadUShort(),
                 LookPitch = reader.ReadShort(),
                 Buttons = reader.ReadByte(),
+                ViewDelay = reader.ReadByte(),
             };
         }
     }

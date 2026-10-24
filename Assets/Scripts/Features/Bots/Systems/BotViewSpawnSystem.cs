@@ -6,12 +6,14 @@ using Features.Bots.Constants;
 using Features.CharacterFeature.Components;
 using Scellecs.Morpeh;
 using UnityEngine;
+using Avatar = Features.CharacterFeature.Components.Avatar;
 
 namespace Features.Bots.Systems
 {
     /// <summary>
-    /// Hydrates bot bodies: builds the view prefab where the body stands and adds the two links.
-    /// A view only — the body is simulated whether or not it has one.
+    /// Hydrates <see cref="Avatar"/> bodies — bots, other players, remote bodies on a client: builds
+    /// the view prefab where the body stands and adds the two links. A view only — the body is
+    /// simulated whether or not it has one.
     /// </summary>
     public sealed class BotViewSpawnSystem : ISystem
     {
@@ -31,7 +33,7 @@ namespace Features.Bots.Systems
         public void OnAwake()
         {
             _filter = World.Filter
-                .With<Bot>()
+                .With<Avatar>()
                 .With<CharacterMotion>()
                 .With<Look>()
                 .Without<CharacterViewLink>()

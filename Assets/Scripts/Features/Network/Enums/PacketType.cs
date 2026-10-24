@@ -5,5 +5,6 @@ namespace Features.Network.Enums
     {
         Input = 1,
         Sync = 2,
+        Snapshot = 3,
     }
 }

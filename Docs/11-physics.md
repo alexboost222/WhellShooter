@@ -53,6 +53,7 @@ PhysicsHook = PhysicsStep
   before: PhysicsReleaseSystem      native objects of disposed / unlinked entities are destroyed
           PhysicsCreateSystem       requests → native bodies / characters; request removed
           CharacterTeleportSystem   PhysicsTeleportRequest → snap
+          CharacterCorrectionSystem PhysicsCharacterCorrection → shift feet + velocity (prediction)
           CharacterInputSystem      PhysicsCharacterInput → native input
   PhysicsWorld.Step()
   after:  CharacterReadbackSystem   native state → PhysicsCharacterState
@@ -76,6 +77,7 @@ move bodies, which waits for the next step anyway.
 | `PhysicsCharacter` | Bodies | link: the native character handle and its body handle |
 | `PhysicsCharacterInput` | the character motor | this tick's move (local x/z, −1..1), yaw (radians about +Y, 0 = +Z), speed cap, jump / sprint / crouch |
 | `PhysicsTeleportRequest` | the character motor | snap the character's feet somewhere (respawn) |
+| `PhysicsCharacterCorrection` | replication (client) | shift feet and velocity by a prediction error (Docs/05) |
 | `PhysicsCharacterState` | Bodies | after the step: feet (and previous), velocity, grounded, crouched, landed / jumped this step, height, landing speed |
 | `BodyPose` | Bodies | after the step: position / rotation (and previous) of a non-static body |
 
