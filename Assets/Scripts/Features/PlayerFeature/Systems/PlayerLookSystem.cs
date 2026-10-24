@@ -18,6 +18,7 @@ namespace Features.PlayerFeature.Systems
         [Inject] private Stash<Look> _look;
 
         [Inject] private PlayerConfig _config;
+        [Inject] private PlayerSettings _settings;
 
         public World World { get; set; }
 
@@ -37,7 +38,7 @@ namespace Features.PlayerFeature.Systems
 
         public void OnUpdate(float deltaTime)
         {
-            var sensitivity = math.radians(_config.LookSensitivity);
+            var sensitivity = math.radians(_settings.LookSensitivity);
             var limit = math.radians(_config.PitchLimit);
 
             foreach (var entity in _filter)

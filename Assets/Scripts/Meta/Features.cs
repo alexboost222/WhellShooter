@@ -7,11 +7,15 @@ using Features.Bots;
 using Features.CharacterFeature;
 using Features.Combat;
 using Features.DestroyFeature;
+using Features.KillCam;
 using Features.Map;
 using Features.Navigation;
 using Features.PlayerFeature;
+using Features.Tracers;
 using Features.ViewmodelFeature;
 using Features.WeaponsFeature;
+using UI.Hud;
+using UI.Pause;
 
 namespace Meta
 {
@@ -87,6 +91,13 @@ namespace Meta
 
             // ---- views ----
             Register<ViewmodelFeature>();
+            // Bullet tracers; registers the Update-phase ShotTraced queue the kill cam and HUD read.
+            Register<TracersFeature>();
+            // Replays the death through the killer's eyes — after the viewmodel, so it writes the
+            // camera last. Registers KillCamStorage for the HUD.
+            Register<KillCamFeature>();
+            Register<HudFeature>();
+            Register<PauseFeature>();
 
             // ---- last ----
             // Disposes everything tagged Destroy at the end of the tick. Must stay last.

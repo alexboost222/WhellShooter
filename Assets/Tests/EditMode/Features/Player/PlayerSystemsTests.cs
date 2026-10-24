@@ -21,6 +21,7 @@ namespace Game.Tests.EditMode.Features.Player
         {
             _world = new EcsTestWorld(ScriptableObject.CreateInstance<PlayerConfig>());
             _spawnPoints = _world.AddInitializer(new PlayerSpawnPointStorage());
+            _world.AddInitializer(_world.Container.New<PlayerSettings>());
             _world.Add<PlayerSpawnSystem>();
             _world.Add<PlayerLookSystem>();
         }

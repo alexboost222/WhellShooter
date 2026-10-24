@@ -1,0 +1,32 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="Hud.uss" />
+    <ui:VisualElement name="hud" class="hud" picking-mode="Ignore">
+        <ui:VisualElement name="damage-flash" class="damage-flash" picking-mode="Ignore" />
+        <ui:VisualElement name="crosshair" class="crosshair" picking-mode="Ignore">
+            <ui:VisualElement class="tick tick--up" picking-mode="Ignore" />
+            <ui:VisualElement class="tick tick--down" picking-mode="Ignore" />
+            <ui:VisualElement class="tick tick--left" picking-mode="Ignore" />
+            <ui:VisualElement class="tick tick--right" picking-mode="Ignore" />
+            <ui:VisualElement class="dot" picking-mode="Ignore" />
+        </ui:VisualElement>
+        <ui:VisualElement name="hit-marker" class="hit-marker" picking-mode="Ignore">
+            <ui:VisualElement class="hit-marker__bar hit-marker__bar--a" picking-mode="Ignore" />
+            <ui:VisualElement class="hit-marker__bar hit-marker__bar--b" picking-mode="Ignore" />
+        </ui:VisualElement>
+        <ui:VisualElement name="health" class="health" picking-mode="Ignore">
+            <ui:Label name="health-text" class="health__text" text="200" picking-mode="Ignore" />
+            <ui:VisualElement class="health__bar" picking-mode="Ignore">
+                <ui:VisualElement name="health-fill" class="health__fill" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="killcam" class="killcam" picking-mode="Ignore">
+            <ui:Label class="killcam__badge" text="KILLCAM" picking-mode="Ignore" />
+            <ui:Label name="killcam-killer" class="killcam__killer" text="" picking-mode="Ignore" />
+        </ui:VisualElement>
+        <ui:VisualElement name="death" class="death" picking-mode="Ignore">
+            <ui:Label name="death-title" class="death__title" text="KILLED" picking-mode="Ignore" />
+            <ui:Label name="death-killer" class="death__killer" text="" picking-mode="Ignore" />
+            <ui:Label name="death-respawn" class="death__respawn" text="" picking-mode="Ignore" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

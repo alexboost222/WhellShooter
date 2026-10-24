@@ -1,0 +1,67 @@
+/* Pause / settings screen (Docs/08 §Pause). Raw UI Toolkit; PauseSystem drives it. */
+
+.pause {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.55);
+    display: none;
+}
+
+.pause__panel {
+    width: 520px;
+    padding: 28px 32px;
+    background-color: rgba(20, 22, 26, 0.95);
+    border-color: rgba(255, 255, 255, 0.12);
+    border-width: 1px;
+    border-radius: 6px;
+}
+
+.pause__title {
+    font-size: 34px;
+    -unity-font-style: bold;
+    color: rgb(255, 255, 255);
+    margin: 0 0 22px 0;
+}
+
+.pause__row {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.pause__label,
+.pause__value {
+    font-size: 20px;
+    color: rgb(225, 225, 225);
+    margin: 0;
+}
+
+.pause__slider {
+    margin: 8px 0 26px 0;
+}
+
+.pause__button {
+    height: 48px;
+    font-size: 22px;
+    -unity-font-style: bold;
+    color: rgb(20, 20, 20);
+    background-color: rgb(235, 235, 235);
+    border-width: 0;
+    border-radius: 4px;
+    margin: 0;
+}
+
+.pause__button:hover {
+    background-color: rgb(255, 255, 255);
+}
+
+.pause__hint {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 12px 0 0 0;
+    -unity-text-align: middle-center;
+}

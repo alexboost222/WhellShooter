@@ -204,7 +204,7 @@ once the pathfinder is warm; a path belongs to whoever asked (`NavStorage` keeps
 
 | Tuning (`CombatConfig`) | Default |
 |---|---|
-| Max health | 100 |
+| Max health | 200 (was 100: bots at 20 per hit killed in five) |
 | Friendly fire | off (free-for-all bodies are always fair game) |
 
 - **Teams.** `Team { Index }` uses the map's numbering (0, 1, …, `FreeForAll = −1`); a body without
@@ -213,7 +213,9 @@ once the pathfinder is warm; a path belongs to whoever asked (`NavStorage` keeps
 - **Hits.** The weapon puts a `ShotRequest` on the shooter; `HitscanSystem` consumes it the next
   tick (read-then-remove): the static world through `IShotOccluder` (phys-r, `ExcludeMoving`), every
   living body analytically as the capsule `CharacterConfig` describes on its feet — so who got hit
-  is decided the same headless as in play. A hit becomes a `Damage` entity.
+  is decided the same headless as in play. A hit becomes a `Damage` entity. Every resolved shot
+  is also published as a `ShotTraced { Shooter, Origin, End, HitBody }` message — the tracer and
+  the hit marker draw it; nothing in the simulation reads it.
 - **Damage** entities (any number per body per tick) are consumed by `DamageApplySystem`: health
   down, `DamageTaken { Hits↑, LastSource, LastOrigin }` on the victim, `Dead { Killer, Direction }`
   at zero. The only place health goes down.
@@ -359,8 +361,9 @@ side has an edge the other cannot have:
   trigger). Read every frame into `CharacterIntent` and `PlayerLookInput`; reading is separate from
   deciding so the deciding half is testable headless.
 - **Look** is spent every frame, never on the tick. Sensitivity 0.08°/pixel, pitch ±85°.
-- Desktop cursor: captured at boot, Escape frees it, a click takes it back; look is ignored while
-  free. Touch controls are a separate task.
+- Desktop cursor: captured at boot; Escape frees it (opening the pause screen) and Escape again or
+  Resume takes it back; look is ignored while it is free. A click no longer recaptures — it may be
+  a click on the pause screen. Touch controls are a separate task.
 
 ## Weapons
 
@@ -447,3 +450,55 @@ rebuilds the model instantly), crouch, near-wall weapon pull-back, a viewmodel c
 separate from the world FOV.
 
 Test scene: `Scenes/Playground_Viewmodel`.
+
+## Tracers
+
+`Features/Tracers`, Update phase, view only. Every `ShotTraced` becomes a short bright streak
+(`TracerConfig`: 5 m long, 0.025 m wide, 350 m/s) flying from just in front of the shooter's eye —
+a little below it, and for the local player a little right too, roughly where the weapon is — to
+the hit point. Pooled `LineRenderer`s; nothing reads them back.
+
+## HUD (UI Toolkit)
+
+`UI/Hud`. **Raw UI Toolkit, no MVVM layer**: one `UIDocument` (`Content/Hud/Hud.uxml` +
+`Hud.uss`, `HudConfig` holds them and the `PanelSettings`), and `HudSystem` (Update) that reads
+the local player's components every frame and writes the named elements directly. It never
+writes gameplay state.
+
+| Element | Shows |
+|---|---|
+| Crosshair | four ticks round the centre; hidden while aiming (the sights are the crosshair), while sprinting and while dead |
+| Hit marker | an × over the crosshair for 0.15 s after the player's shot hits a body |
+| Health | bar + number, bottom left; the bar turns red below 30 % |
+| Damage flash | red vignette when `DamageTaken.Hits` goes up, fading over 0.4 s |
+| Death screen | "KILLED BY …", the killer's distance, and the respawn countdown (`PlayerRespawn.Remaining`) |
+
+## Kill cam
+
+`Features/KillCam`. **A replay of the death through the killer's eyes**, view only.
+
+- **Recording.** `KillCamRecordSystem` (`AfterPhysics`) writes one frame per fixed tick into
+  `KillCamStorage`: every body's feet, velocity, look, grounded, dead — a ring of 5 s. The shots
+  come in as `ShotTraced` in Update and are stamped with the latest tick.
+- **Replay.** When the local player dies (and the killer is in the history), recording stops and
+  `KillCamSystem` plays the last **3 s up to the death plus 0.5 s**, at real speed: the camera at
+  the killer's recorded eyes and look; every other body — the player included — as a ghost of the
+  bot view prefab, moved and animated from the record (move blend, grounded, a death clip); the
+  shots as tracers from their own pool. Live bots' renderers and the player's weapon are hidden
+  meanwhile. The HUD shows a KILLCAM strip with the killer.
+- **After it**, the last frame holds and the death screen counts down the respawn (`PlayerConfig`
+  respawn delay 5 s = the replay + a beat). No killer, or none in the history → the camera rises
+  over the spot and looks down. On revive everything is put back: camera pose, weapon, live bots,
+  ghosts destroyed, recording on.
+- Listed after the viewmodel (writes the camera last) and the tracers (reads their Update-phase
+  `ShotTraced` queue).
+
+## Pause / settings
+
+`UI/Pause`, raw UI Toolkit (`Content/Pause/Pause.uxml` + `Pause.uss`, layout in `HudConfig`). Shown
+whenever the desktop cursor is free. **Mouse sensitivity** slider, 0.01–0.40 °/pixel (default
+0.08), and **Resume**. The screen only publishes — `SetLookSensitivity`, `ResumePlay` — and the
+player feature applies them: `PlayerSettings` holds what is in effect (read by `PlayerLookSystem`),
+`PlayerSettingsSystem` loads and saves it in `PlayerPrefs` under `settings.look_sensitivity`
+(`PlayerPrefKeys` — a contract: renaming forgets everyone's value).
+

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 435b9ed79905f4fe4b1cec140fff5382, type: 3}
   m_Name: CombatConfig
   m_EditorClassIdentifier: Game::Features.Combat.Configs.CombatConfig
-  _maxHealth: 100
+  _maxHealth: 200
   _friendlyFire: 0

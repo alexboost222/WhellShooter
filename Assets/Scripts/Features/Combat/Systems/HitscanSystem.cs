@@ -1,7 +1,9 @@
 using Engine.DI;
 using Features.CharacterFeature.Components;
 using Features.CharacterFeature.Configs;
+using Engine.Messages;
 using Features.Combat.Components;
+using Features.Combat.Messages;
 using Features.Combat.Utils;
 using Features.WeaponsFeature.Components;
 using Features.WeaponsFeature.Configs;
@@ -13,6 +15,7 @@ namespace Features.Combat.Systems
     /// <summary>
     /// Consumes <see cref="ShotRequest"/> (read-then-remove): finds the first thing the shot meets —
     /// world geometry or a living body's capsule — and turns a body hit into a <see cref="Damage"/>.
+    /// Every resolved shot is also published as <see cref="ShotTraced"/> for the views.
     /// </summary>
     /// <remarks>
     /// <b>Bodies are tested analytically</b>, ray against the capsule <c>CharacterConfig</c>
@@ -29,6 +32,7 @@ namespace Features.Combat.Systems
         [Inject] private Stash<CharacterMotion> _characterMotion;
         [Inject] private Stash<Damage> _damage;
 
+        [Inject] private IPublisher<ShotTraced> _shotTraced;
         [Inject] private IShotOccluder _occluder;
         [Inject] private CharacterConfig _characterConfig;
         [Inject] private WeaponsConfig _weaponsConfig;
@@ -96,6 +100,14 @@ namespace Features.Combat.Systems
                     victim = body;
                 }
             }
+
+            _shotTraced.Publish(new ShotTraced
+            {
+                Shooter = shooter.ID,
+                Origin = shot.Origin,
+                End = shot.Origin + direction * reach,
+                HitBody = victim != null,
+            });
 
             if (victim == null)
             {

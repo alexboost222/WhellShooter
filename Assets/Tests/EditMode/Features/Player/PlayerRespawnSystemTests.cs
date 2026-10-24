@@ -41,8 +41,8 @@ namespace Game.Tests.EditMode.Features.Player
             _world.Set(body, new PlayerTag());
             _world.Set(body, new Dead());
 
-            _world.Tick(0.5f, 6);
-            Assert.That(_world.Has<ReviveRequest>(body), Is.False, "the default delay is 3 s");
+            _world.Tick(0.5f, 10);
+            Assert.That(_world.Has<ReviveRequest>(body), Is.False, "the default delay is 5 s: the kill cam, then the death screen");
 
             // Exactly the tick the delay runs out (Combat, not here, would remove Dead in the same tick).
             _world.Tick(0.5f);

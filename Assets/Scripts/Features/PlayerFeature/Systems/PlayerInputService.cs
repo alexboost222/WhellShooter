@@ -15,9 +15,11 @@ namespace Features.PlayerFeature.Systems
     /// <b>A copy of the asset, not the asset.</b> Enabling actions on the project asset itself
     /// would leave them enabled after play mode — with domain reload off, into the next session.
     /// <para>
-    /// The cursor rule is a desktop convenience: Escape releases it, a click takes it back, and
-    /// look input is ignored while it is free so moving to the inspector does not spin the view.
-    /// On touch there is no cursor and it is always "captured".
+    /// The cursor rule is a desktop convenience: Escape releases it — which is what opens the pause
+    /// screen — and Escape again or the screen's Resume takes it back. Look input is ignored while it
+    /// is free, so moving to the inspector or a slider does not spin the view. A click does not
+    /// recapture: it may be a click on the pause screen. On touch there is no cursor and it is
+    /// always "captured".
     /// </para>
     /// </remarks>
     public sealed class PlayerInputService : IInitializer
@@ -83,15 +85,14 @@ namespace Features.PlayerFeature.Systems
             var keyboard = Keyboard.current;
             if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
             {
-                Capture(false);
-                return;
+                Capture(Cursor.lockState != CursorLockMode.Locked);
             }
+        }
 
-            var mouse = Mouse.current;
-            if (mouse != null && mouse.leftButton.wasPressedThisFrame && Cursor.lockState != CursorLockMode.Locked)
-            {
-                Capture(true);
-            }
+        /// <summary>Takes the cursor back — the pause screen's Resume, via <c>ResumePlay</c>.</summary>
+        public void Resume()
+        {
+            Capture(true);
         }
 
         private static void Capture(bool captured)

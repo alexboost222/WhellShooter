@@ -1,6 +1,8 @@
 using Engine.DI;
+using Engine.Messages;
 using Features.CharacterFeature.Components;
 using Features.PlayerFeature.Components;
+using Features.PlayerFeature.Messages;
 using Scellecs.Morpeh;
 using Unity.Mathematics;
 using UnityEngine;
@@ -23,6 +25,7 @@ namespace Features.PlayerFeature.Systems
         [Inject] private Stash<PlayerLookInput> _playerLookInput;
 
         [Inject] private PlayerInputService _input;
+        [Inject] private SubscriberQueue<ResumePlay> _resumePlay;
 
         public World World { get; set; }
 
@@ -43,6 +46,11 @@ namespace Features.PlayerFeature.Systems
 
         public void OnUpdate(float deltaTime)
         {
+            foreach (var _ in _resumePlay)
+            {
+                _input.Resume();
+            }
+
             _input.UpdateCursor();
 
             foreach (var entity in _filter)

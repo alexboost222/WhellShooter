@@ -7,13 +7,15 @@ namespace Features.Combat.Configs
     [CreateAssetMenu(menuName = "WheelShooter/Configs/Combat", fileName = nameof(CombatConfig))]
     public sealed class CombatConfig : Config
     {
+        private const float DefaultMaxHealth = 200f;
+
         [Tooltip("Hit points every body starts and revives with.")]
-        [SerializeField] private float _maxHealth = 100f;
+        [SerializeField] private float _maxHealth = DefaultMaxHealth;
 
         [Tooltip("Whether a shot hurts a team-mate. Free-for-all bodies are always fair game.")]
         [SerializeField] private bool _friendlyFire;
 
-        public float MaxHealth => _maxHealth > 0f ? _maxHealth : 100f;
+        public float MaxHealth => _maxHealth > 0f ? _maxHealth : DefaultMaxHealth;
 
         public bool FriendlyFire => _friendlyFire;
 

@@ -1,0 +1,173 @@
+/* HUD (Docs/08 §HUD). Raw UI Toolkit; HudSystem writes the named elements. */
+
+.hud {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* --- crosshair ------------------------------------------------------------------------ */
+
+.crosshair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+}
+
+.tick {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.5);
+    border-width: 1px;
+}
+
+.tick--up    { width: 3px; height: 12px; left: -1.5px; top: -19px; }
+.tick--down  { width: 3px; height: 12px; left: -1.5px; top: 7px; }
+.tick--left  { width: 12px; height: 3px; left: -19px; top: -1.5px; }
+.tick--right { width: 12px; height: 3px; left: 7px; top: -1.5px; }
+
+.dot {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    left: -1.5px;
+    top: -1.5px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.hit-marker {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+}
+
+.hit-marker__bar {
+    position: absolute;
+    width: 22px;
+    height: 2px;
+    left: -11px;
+    top: -1px;
+    background-color: rgb(255, 255, 255);
+}
+
+.hit-marker__bar--a { rotate: 45deg; }
+.hit-marker__bar--b { rotate: -45deg; }
+
+/* --- health --------------------------------------------------------------------------- */
+
+.health {
+    position: absolute;
+    left: 32px;
+    bottom: 28px;
+    width: 260px;
+}
+
+.health__text {
+    font-size: 30px;
+    -unity-font-style: bold;
+    color: rgb(255, 255, 255);
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgba(0, 0, 0, 0.6);
+    margin: 0 0 4px 0;
+    padding: 0;
+}
+
+.health__bar {
+    height: 10px;
+    background-color: rgba(0, 0, 0, 0.45);
+    border-color: rgba(255, 255, 255, 0.25);
+    border-width: 1px;
+}
+
+.health__fill {
+    height: 100%;
+    width: 100%;
+    background-color: rgb(235, 235, 235);
+}
+
+.health__fill--low {
+    background-color: rgb(230, 60, 50);
+}
+
+/* --- damage flash --------------------------------------------------------------------- */
+
+.damage-flash {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    border-width: 90px;
+    border-color: rgba(200, 0, 0, 0.55);
+    background-color: rgba(200, 0, 0, 0.12);
+    opacity: 0;
+}
+
+/* --- death ---------------------------------------------------------------------------- */
+
+.death {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 22%;
+    align-items: center;
+    padding: 18px 0 20px 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    display: none;
+}
+
+.death__title {
+    font-size: 44px;
+    -unity-font-style: bold;
+    color: rgb(235, 70, 60);
+    margin: 0;
+}
+
+.death__killer {
+    font-size: 22px;
+    color: rgb(255, 255, 255);
+    margin: 4px 0 0 0;
+}
+
+.death__respawn {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 10px 0 0 0;
+}
+
+/* --- kill cam ------------------------------------------------------------------------- */
+
+.killcam {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 120px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+}
+
+.killcam__badge {
+    font-size: 26px;
+    -unity-font-style: bold;
+    color: rgb(20, 20, 20);
+    background-color: rgb(235, 70, 60);
+    padding: 4px 14px;
+    margin: 0 18px 0 0;
+}
+
+.killcam__killer {
+    font-size: 26px;
+    color: rgb(255, 255, 255);
+    margin: 0;
+}
+

@@ -15,7 +15,7 @@ namespace Features.PlayerFeature.Configs
     {
         private const float DefaultLookSensitivity = 0.08f;
         private const float DefaultPitchLimit = 85f;
-        private const float DefaultRespawnDelay = 3f;
+        private const float DefaultRespawnDelay = 5f;
 
         [Tooltip("The player's body and camera: a prefab with a CharacterView on the root. " +
                  "Content/Player/Prefabs/Player.")]
@@ -30,7 +30,7 @@ namespace Features.PlayerFeature.Configs
         [Tooltip("How far up or down the view can go, degrees from level.")]
         [SerializeField] private float pitchLimit = DefaultPitchLimit;
 
-        [Tooltip("Seconds dead before the player comes back on the spawn point.")]
+        [Tooltip("Seconds dead before the player comes back on the spawn point. Covers the kill cam (3.5 s) plus a beat of the death screen.")]
         [SerializeField] private float respawnDelay = DefaultRespawnDelay;
 
         public CharacterView ViewPrefab => viewPrefab;

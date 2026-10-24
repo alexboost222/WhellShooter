@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="Pause.uss" />
+    <ui:VisualElement name="pause" class="pause">
+        <ui:VisualElement class="pause__panel">
+            <ui:Label class="pause__title" text="PAUSED" />
+            <ui:VisualElement class="pause__row">
+                <ui:Label class="pause__label" text="Mouse sensitivity" />
+                <ui:Label name="sensitivity-value" class="pause__value" text="0.08" />
+            </ui:VisualElement>
+            <ui:Slider name="sensitivity" class="pause__slider" low-value="0.01" high-value="0.4" />
+            <ui:Button name="resume" class="pause__button" text="Resume" />
+            <ui:Label class="pause__hint" text="Esc — back to the game" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
