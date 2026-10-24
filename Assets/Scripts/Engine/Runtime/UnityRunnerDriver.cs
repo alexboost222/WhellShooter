@@ -12,15 +12,23 @@ namespace Engine.Runtime
     /// simulation's physics is phys-r, stepped by the Runner's physics hook (Docs/11), so a stray
     /// collider in a view stays inert instead of being auto-simulated behind our back.
     /// <para>
-    /// The fixed step is Unity's own (<c>ProjectSettings/TimeManager</c>); the driver forwards
-    /// <c>Time.fixedDeltaTime</c> rather than owning a rate.
+    /// <b>Ticks are not Unity's <c>FixedUpdate</c>.</b> Each <c>Update</c> feeds the previous
+    /// frame's unscaled delta into a <see cref="TickAccumulator"/> and runs the fixed phase as many
+    /// times as it says (0, 1 or more, at most <see cref="MaxTicksPerFrame"/>), then the frame
+    /// phase. The tick length is read once from <c>Time.fixedDeltaTime</c>
+    /// (<c>ProjectSettings/TimeManager</c>) so there is still one place to set it.
     /// </para>
     /// </remarks>
     [AddComponentMenu("")]
     [DisallowMultipleComponent]
     public sealed class UnityRunnerDriver : MonoBehaviour
     {
+        /// <summary>Most ticks one frame may run; the rest of a long frame is dropped (no death spiral).</summary>
+        public const int MaxTicksPerFrame = 8;
+
         private Runner _runner;
+        private TickAccumulator _ticks;
+        private long _reportedDrops;
 
         /// <summary>
         /// Creates the hidden driver object and takes PhysX off auto. Called once from Bootstrap.
@@ -40,6 +48,7 @@ namespace Engine.Runtime
 
             var driver = host.AddComponent<UnityRunnerDriver>();
             driver._runner = runner;
+            driver._ticks = new TickAccumulator(Time.fixedDeltaTime, MaxTicksPerFrame);
 
             Log.Debug(LogChannels.Runtime, $"Runner driving at {1f / Time.fixedDeltaTime:0.#} Hz.");
 
@@ -62,14 +71,28 @@ namespace Engine.Runtime
             _runner = null;
         }
 
-        private void FixedUpdate()
-        {
-            _runner?.FixedTick(Time.fixedDeltaTime);
-        }
-
         private void Update()
         {
-            _runner?.FrameTick(Time.deltaTime);
+            if (_runner == null)
+            {
+                return;
+            }
+
+            // Unscaled: the tick is real time, shared with other processes over the network.
+            var ticks = _ticks.Advance(Time.unscaledDeltaTime);
+            for (var i = 0; i < ticks; i++)
+            {
+                _runner.FixedTick(_ticks.TickSeconds);
+            }
+
+            if (_ticks.DroppedTicks != _reportedDrops)
+            {
+                Log.Warning(LogChannels.Runtime,
+                    $"Frame owed more than {MaxTicksPerFrame} ticks; dropped {_ticks.DroppedTicks - _reportedDrops}.");
+                _reportedDrops = _ticks.DroppedTicks;
+            }
+
+            _runner.FrameTick(Time.deltaTime);
         }
 
         /// <remarks>

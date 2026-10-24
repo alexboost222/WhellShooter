@@ -12,6 +12,7 @@ using Features.Navigation;
 using Features.PlayerFeature;
 using Features.ViewmodelFeature;
 using Features.WeaponsFeature;
+using Features.Network;
 
 namespace Meta
 {
@@ -67,6 +68,10 @@ namespace Meta
 
         private static void Registrations()
         {
+            // ---- infrastructure ----
+            // Server: tick, receive, consume input, send. Client: receive, tick, sample + send input.
+            Register<NetworkFeature>();
+
             // ---- gameplay ----
             // phys-r bridge: bodies and characters from requests; installs the physics hook, so
             // its systems run after every FixedUpdate step whatever its place here (Docs/11).
