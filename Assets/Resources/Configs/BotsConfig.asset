@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2fca80e7ed064139a26c92047970bf7, type: 3}
+  m_Name: BotsConfig
+  m_EditorClassIdentifier: Game::Features.Bots.Configs.BotsConfig
+  _profiles:
+  - Name: Regular
+    ViewDistance: 45
+    FieldOfView: 120
+    AwarenessRadius: 4
+    Memory: 6
+    ReactionTime: 0.35
+    AimError: 3
+    SettledAimError: 0.3
+    AimSettleTime: 1.2
+    TurnSpeed: 300
+    TurnSharpness: 10
+    FireTolerance: 2.5
+    PreferredRange: 14
+    StrafeInterval: {x: 0.8, y: 2}
+    StrafeDistance: {x: 2, y: 4}
+  _defaultProfile: Regular
+  _thinkInterval: 0.2
+  _scanInterval: 0.15
+  _commitment: 0.1
+  _wanderScore: 0.1
+  _attackScore: 0.8
+  _chaseScore: 0.5
+  _arriveDistance: 0.6
+  _repathInterval: 1.5
+  _stuckDistance: 0.3
+  _stuckCheckInterval: 1
+  _stuckLimit: 3
+  _respawnDelay: 4
+  _viewPrefab: {fileID: 4874517949774795536, guid: 7474166ecc3fc48c683a41745a19a939, type: 3}

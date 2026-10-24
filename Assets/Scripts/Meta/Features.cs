@@ -3,7 +3,9 @@ using Engine.Diagnostics;
 using Engine.Diagnostics.Logs;
 using Engine.Runtime;
 using Features.Bodies;
+using Features.Bots;
 using Features.CharacterFeature;
+using Features.Combat;
 using Features.DestroyFeature;
 using Features.Map;
 using Features.Navigation;
@@ -76,6 +78,10 @@ namespace Meta
 
             // Drivers of bodies first, so what they ask for this tick/frame is what the body does.
             Register<PlayerFeature>();
+            // AI-driven bodies: the same intent and look the player writes (Docs/08 §Bots).
+            Register<BotsFeature>();
+            // Last tick's shots land, then the dead are silenced before the motor reads intent.
+            Register<CombatFeature>();
             Register<CharacterFeature>();
             Register<WeaponsFeature>();
 
