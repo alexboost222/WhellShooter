@@ -19,6 +19,9 @@ namespace Features.Map.Utils
         /// <summary>Interior floors sit this far above the ground plane, so the two never z-fight.</summary>
         public const float FloorLift = 0.02f;
 
+        /// <summary>Share of outskirt cells (past the first ring) that get a tree.</summary>
+        private const float OutskirtsTreeChance = 0.45f;
+
 
         private static readonly int2[] Steps =
         {
@@ -775,28 +778,17 @@ namespace Features.Map.Utils
                         continue;
                     }
 
-                    // The ring hugging the wall stays bushes and rocks only: a tree there would
-                    // poke its crown over the wall into the arena.
+                    // Trees only, and not in the ring hugging the wall: a tree there would poke its
+                    // crown over the wall into the arena. Nothing lower — bushes, rocks — out here:
+                    // the 6 m border hides them from every spot inside, so they would be draw
+                    // calls nobody sees (Docs/10).
                     var ring = math.max(math.max(-x, x - settings.Width + 1), math.max(-z, z - settings.Depth + 1));
-                    var roll = random.NextFloat();
-                    MapPieceKind kind;
-                    if (ring > 1 && roll < 0.45f)
-                    {
-                        kind = MapPieceKind.Tree;
-                    }
-                    else if (roll < 0.6f)
-                    {
-                        kind = MapPieceKind.Bush;
-                    }
-                    else if (roll < 0.75f)
-                    {
-                        kind = MapPieceKind.Rock;
-                    }
-                    else
+                    if (ring <= 1 || random.NextFloat() >= OutskirtsTreeChance)
                     {
                         continue;
                     }
 
+                    var kind = MapPieceKind.Tree;
                     var center = layout.Origin + new float3((x + 0.5f) * layout.CellSize, 0f, (z + 0.5f) * layout.CellSize);
                     layout.Pieces.Add(new MapPiece
                     {

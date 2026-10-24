@@ -68,8 +68,19 @@ namespace Features.KillCam.Systems
             var frame = _frames[Slot(LatestTick)];
             frame.Clear();
 
+            // Oldest first, so the expired ones are a prefix; no lambda, nothing allocated per tick.
             var oldest = OldestTick;
-            _shots.RemoveAll(shot => shot.Tick < oldest);
+            var expired = 0;
+            while (expired < _shots.Count && _shots[expired].Tick < oldest)
+            {
+                expired++;
+            }
+
+            if (expired > 0)
+            {
+                _shots.RemoveRange(0, expired);
+            }
+
             return frame;
         }
 

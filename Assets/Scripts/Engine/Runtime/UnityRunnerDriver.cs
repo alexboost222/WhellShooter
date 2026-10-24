@@ -26,6 +26,9 @@ namespace Engine.Runtime
         /// <summary>Most ticks one frame may run; the rest of a long frame is dropped (no death spiral).</summary>
         public const int MaxTicksPerFrame = 8;
 
+        /// <summary>The frame-rate cap on iOS / Android (Docs/10).</summary>
+        public const int MobileFrameRate = 60;
+
         private Runner _runner;
         private TickAccumulator _ticks;
         private long _reportedDrops;
@@ -39,6 +42,12 @@ namespace Engine.Runtime
             Guard.ThrowIfNotMainThread();
 
             UnityEngine.Physics.simulationMode = SimulationMode.Script;
+
+#if UNITY_IOS || UNITY_ANDROID
+            // Mobile players default to 30 fps; a shooter wants every frame the screen offers up to
+            // 60 (Docs/10). vSync is ignored on mobile — the frame rate is the cap.
+            Application.targetFrameRate = MobileFrameRate;
+#endif
 
             // DontDestroyOnLoad only — deliberately NOT HideFlags.DontSave. That flag makes the
             // object survive leaving play mode in the editor, so the next session's Bootstrap

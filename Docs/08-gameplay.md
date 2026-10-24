@@ -52,6 +52,8 @@ A walled compound on a square **cell grid**. The cell is **2.5 m**, the module o
 | Windows | 35 % of plain wall segments | sight lines through, not walk through |
 | Roof access | 60 % of buildings: outside stairs + 1.5 m parapet | verticality, a power position that can be contested |
 | Cover | ~16 % of open cells, ≥ 1 empty cell between pieces | no cover touching cover: no sealed corridors |
+| Ground detail (grass, flowers) | density 0.8 per open cell | was 1.2: the single biggest triangle cost on mobile (Docs/10) |
+| Outskirts | trees on 45 % of cells past the first ring; nothing else | bushes and rocks behind the 6 m border were invisible from inside — pure draw cost |
 | Low / high cover | 65 % / 35 % | low = shoot over (≤ 1.5 m), high = break line of sight |
 | FFA spawns | 12, farthest-point spread | nobody spawns on top of anybody |
 
@@ -75,7 +77,9 @@ A walled compound on a square **cell grid**. The cell is **2.5 m**, the module o
   `GenerateMap { Seed }` or creating the request component.
 - **View** (`Systems/MapViewSystem`, Update) — when `MapStorage.Version` changes, throws away the
   old arena and builds the new one from `MapConfig`'s prefab palette (`Utils/MapBuilder`), then
-  static-batches it. The view owns GameObjects only; nothing reads gameplay back from them.
+  leaves the drawing to the GPU Resident Drawer — no static batching, which it would skip
+  (Docs/10). Grass, flowers, bushes, floors and ceilings cast no shadows. The view owns
+  GameObjects only; nothing reads gameplay back from them.
 - **Palette** — `MapConfig` maps each `MapPieceKind` to a list of prefabs; a piece stores the
   kind and a variant number, never a prefab. The builder places each prefab by the centre of its
   mesh bounds, so kits with different pivots (PolygonGeneric pivots on a corner) need no per-prefab

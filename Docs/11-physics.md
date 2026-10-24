@@ -129,8 +129,8 @@ occluder wants. For the raw API (batched rays, rewinds, sweeps, overlaps) use
 |---|---|---|
 | macOS (Editor, standalone) | `Plugins/macOS/libphysr.dylib` (universal) | `scripts/build-unity-plugins.sh macos` in phys-r |
 | Windows x64 (Editor, standalone) | `Plugins/Windows/x86_64/physr.dll` | `… windows` (MSVC) |
-| Android | `Plugins/Android/<abi>/libphysr.so` | `… android` (NDK + `cargo-ndk`) — **not built yet** |
-| iOS | `Plugins/iOS/libphysr.a` | `… ios` — **not built yet** |
+| Android (arm64-v8a only — the player's only ABI) | `Plugins/Android/arm64-v8a/libphysr.so` | `cargo ndk -t arm64-v8a … build --release -p phys-r-ffi` (NDK r23+; Unity 2022.3's bundled NDK works) |
+| iOS (arm64, static, `__Internal`) | `Plugins/iOS/libphysr.a` | `… ios` (Xcode) |
 | Linux (dedicated server) | `Plugins/Linux/x86_64/libphysr.so` | `… linux` — **not built yet** |
 
 The package is embedded (`Packages/com.physr.engine`, phys-r `9e10ac3`); binaries are in LFS.

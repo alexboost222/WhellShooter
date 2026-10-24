@@ -34,7 +34,7 @@ where it applies:
 | `06-meta-runner` | bootstrap, GameState flow, Runner, ticks & time |
 | `08-gameplay` | **what the game does**: feature roster, tuning numbers |
 | `09-roadmap-and-open-design` | **not law** — unsettled design, open questions |
-| `10-build-and-release` | Android/iOS builds, signing, store upload |
+| `10-build-and-release` | Android/iOS builds, player settings, rendering budget, store upload |
 | `11-physics` | phys-r: the world service, the physics hook, the Bodies ECS bridge |
 
 Once a doc exists it is law: if implementation genuinely fights it, say so and

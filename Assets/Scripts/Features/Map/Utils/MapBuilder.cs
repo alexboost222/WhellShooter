@@ -82,6 +82,33 @@ namespace Features.Map.Utils
             {
                 Object.DestroyImmediate(collider);
             }
+
+            if (!CastsShadow(piece.Kind))
+            {
+                foreach (var renderer in instance.GetComponentsInChildren<Renderer>())
+                {
+                    renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Small or flat things don't cast shadows (Docs/10): grass and flowers are most of the
+        /// arena's renderers and their shadows are invisible noise; floors and ceilings sit flush
+        /// against something that already does.
+        /// </summary>
+        private static bool CastsShadow(MapPieceKind kind)
+        {
+            switch (kind)
+            {
+                case MapPieceKind.GroundDetail:
+                case MapPieceKind.Bush:
+                case MapPieceKind.Floor:
+                case MapPieceKind.Ceiling:
+                    return false;
+                default:
+                    return true;
+            }
         }
 
         /// <summary>Bounds of the prefab's meshes, in the prefab root's space.</summary>

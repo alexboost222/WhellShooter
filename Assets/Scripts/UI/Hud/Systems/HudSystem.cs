@@ -63,6 +63,9 @@ namespace UI.Hud.Systems
         private float _hitMarkerLeft;
         private float _damageFlashLeft;
         private uint _hitsSeen;
+        private int _shownHealth = -1;
+        private int _shownRespawn = -2;
+        private string _shownKiller = "";
         private EntityId _seenPlayer;
 
         public void OnAwake()
@@ -115,7 +118,14 @@ namespace UI.Hud.Systems
         {
             var health = _health.Get(player);
             var fraction = math.saturate(health.Fraction);
-            _healthText.text = Mathf.CeilToInt(math.max(0f, health.Current)).ToString();
+            // Only on change: a number formatted every frame is a string of garbage every frame.
+            var shown = Mathf.CeilToInt(math.max(0f, health.Current));
+            if (shown != _shownHealth)
+            {
+                _shownHealth = shown;
+                _healthText.text = shown.ToString();
+            }
+
             _healthFill.style.width = Length.Percent(fraction * 100f);
             _healthFill.EnableInClassList("health__fill--low", fraction < LowHealth);
         }
@@ -162,11 +172,20 @@ namespace UI.Hud.Systems
             }
 
             var killer = KillerText(player, _dead.Get(player).Killer);
-            _killcamKiller.text = killer.Length > 0 ? "Killed " + killer : "";
-            _deathKiller.text = killer;
-            _deathRespawn.text = _playerRespawn.Has(player)
-                ? $"Respawn in {math.max(0f, _playerRespawn.Get(player).Remaining):0.0}"
-                : "Respawning…";
+            if (killer != _shownKiller)
+            {
+                _shownKiller = killer;
+                _killcamKiller.text = killer.Length > 0 ? "Killed " + killer : "";
+                _deathKiller.text = killer;
+            }
+            var tenths = _playerRespawn.Has(player)
+                ? Mathf.CeilToInt(math.max(0f, _playerRespawn.Get(player).Remaining) * 10f)
+                : -1;
+            if (tenths != _shownRespawn)
+            {
+                _shownRespawn = tenths;
+                _deathRespawn.text = tenths >= 0 ? $"Respawn in {tenths / 10f:0.0}" : "Respawning…";
+            }
         }
 
         private string KillerText(Entity player, EntityId killer)
@@ -219,6 +238,9 @@ namespace UI.Hud.Systems
             _deathKiller = root.Q<Label>("death-killer");
             _deathRespawn = root.Q<Label>("death-respawn");
             _hitMarkerElement.style.display = DisplayStyle.None;
+            _shownHealth = -1;
+            _shownRespawn = -2;
+            _shownKiller = null;
             return true;
         }
     }

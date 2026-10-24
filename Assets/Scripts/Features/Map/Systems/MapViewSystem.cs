@@ -8,7 +8,7 @@ namespace Features.Map.Systems
 {
     /// <summary>
     /// Draws the arena: whenever <see cref="MapStorage.Version"/> moves, the old arena's GameObjects
-    /// go and the new layout is built from the <see cref="MapConfig"/> palette, then static-batched.
+    /// go and the new layout is built from the <see cref="MapConfig"/> palette, then drawn by the GPU Resident Drawer (Docs/10).
     /// </summary>
     /// <remarks>
     /// A view: it reads the storage and owns GameObjects, and nothing reads gameplay back from them.
@@ -49,8 +49,9 @@ namespace Features.Map.Systems
                 return;
             }
 
+            // No static batching: the GPU Resident Drawer instances the arena's repeated meshes
+            // (Docs/10), and it skips anything static-batched.
             _root = _builder.Build(_storage.Layout, null);
-            StaticBatchingUtility.Combine(_root);
         }
 
         private void Clear()

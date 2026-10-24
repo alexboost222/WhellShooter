@@ -84,7 +84,7 @@ namespace Features.Map.Utils
             CoverDensity = 0.16f,
             LowCoverShare = 0.65f,
             InteriorPropChance = 0.3f,
-            DetailDensity = 1.2f,
+            DetailDensity = 0.8f,
             OutskirtsRings = 4,
         };
 
