@@ -5,6 +5,7 @@ using Features.CharacterFeature.Configs;
 using Features.Combat.Components;
 using Features.Combat.Messages;
 using Features.Combat.Systems;
+using Features.Network.Systems;
 using Features.WeaponsFeature.Components;
 using Features.WeaponsFeature.Configs;
 using NUnit.Framework;
@@ -32,6 +33,7 @@ namespace Game.Tests.EditMode.Features.Combat
 
             _world = new EcsTestWorld(_weapons, ScriptableObject.CreateInstance<CharacterConfig>());
             _world.Container.Register<IShotOccluder>(new WallAt(30f));
+            _world.Container.Register(new NetRole(true));
             _world.Add<HitscanSystem>();
 
             _bus = _world.Container.Resolve<MessageBus>();
@@ -74,13 +76,33 @@ namespace Game.Tests.EditMode.Features.Combat
             Assert.That(shots[0].End.z, Is.LessThan(10f).And.GreaterThan(9f), "stops at the capsule's surface");
         }
 
-        private List<ShotTraced> Fire()
+        [Test]
+        public void ARewoundShot_HitsWhereTheBodyWas_NotWhereItIs()
+        {
+            // Now 5 m to the side; three steps ago straight ahead.
+            var victim = _world.World.CreateEntity();
+            _world.Set(victim, new CharacterTag());
+            _world.Set(victim, new CharacterMotion { Position = new float3(5f, 0f, 10f) });
+            _world.Set(victim, new Health { Current = 100f, Max = 100f });
+            var feet = new float3[BodyHistory.Capacity];
+            feet[0] = new float3(0f, 0f, 10f);
+            feet[1] = new float3(2f, 0f, 10f);
+            feet[2] = new float3(4f, 0f, 10f);
+            feet[3] = new float3(5f, 0f, 10f);
+            _world.Set(victim, new BodyHistory { Feet = feet, Cursor = 4, Count = 4 });
+
+            Assert.That(Fire()[0].HitBody, Is.False, "unrewound: the body has moved away");
+            Assert.That(Fire(3)[0].HitBody, Is.True, "rewound 3 steps: it stood in the line of fire");
+        }
+
+        private List<ShotTraced> Fire(int rewind = 0)
         {
             _world.Set(_shooter, new ShotRequest
             {
                 Origin = new float3(0f, 1.6f, 0f),
                 Direction = new float3(0f, 0f, 1f),
                 WeaponId = _weapons.DefaultWeaponId,
+                RewindTicks = rewind,
             });
             _world.Tick(0.02f);
 

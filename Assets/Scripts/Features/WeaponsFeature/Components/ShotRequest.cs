@@ -16,5 +16,8 @@ namespace Features.WeaponsFeature.Components
         public float3 Direction;
 
         public int WeaponId;
+
+        /// <summary>Ticks to rewind the targets by — where the shooter saw them (Docs/05). 0 = now.</summary>
+        public int RewindTicks;
     }
 }

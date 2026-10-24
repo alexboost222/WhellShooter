@@ -1,4 +1,5 @@
 using Features.CharacterFeature.Components;
+using Features.Network.Systems;
 using Features.PlayerFeature.Components;
 using Features.PlayerFeature.Configs;
 using Features.PlayerFeature.Systems;
@@ -24,6 +25,7 @@ namespace Game.Tests.EditMode.Features.Player
         {
             _world = new EcsTestWorld(ScriptableObject.CreateInstance<PlayerConfig>());
             _settings = _world.AddInitializer(_world.Container.New<PlayerSettings>());
+            _world.Container.Register(new LocalInputBuffer());
             _world.Add<PlayerLookSystem>();
         }
 

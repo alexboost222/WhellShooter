@@ -14,6 +14,8 @@ namespace Engine.Tests.Net
             writer.WriteShort(-12345);
             writer.WriteInt(int.MinValue + 7);
             writer.WriteUInt(uint.MaxValue - 3);
+            writer.WriteUShort(65000);
+            writer.WriteFloat(-1.25e-3f);
 
             var reader = new PacketReader(writer.Buffer, writer.Length);
 
@@ -22,6 +24,8 @@ namespace Engine.Tests.Net
             Assert.That(reader.ReadShort(), Is.EqualTo(-12345));
             Assert.That(reader.ReadInt(), Is.EqualTo(int.MinValue + 7));
             Assert.That(reader.ReadUInt(), Is.EqualTo(uint.MaxValue - 3));
+            Assert.That(reader.ReadUShort(), Is.EqualTo(65000));
+            Assert.That(reader.ReadFloat(), Is.EqualTo(-1.25e-3f));
             Assert.That(reader.IsValid, Is.True);
             Assert.That(reader.Remaining, Is.Zero);
         }

@@ -1,8 +1,10 @@
 using Engine.DI;
 using Engine.Messages;
-using Features.CharacterFeature.Components;
+using Features.Network.Enums;
+using Features.Network.Systems;
 using Features.PlayerFeature.Components;
 using Features.PlayerFeature.Messages;
+using Features.PlayerFeature.Utils;
 using Scellecs.Morpeh;
 using Unity.Mathematics;
 using UnityEngine;
@@ -10,9 +12,10 @@ using UnityEngine;
 namespace Features.PlayerFeature.Systems
 {
     /// <summary>
-    /// Reads the devices into the player body's <see cref="CharacterIntent"/> and
-    /// <see cref="PlayerLookInput"/>, every frame. Reads only — what the input means is decided by
-    /// the systems that consume it.
+    /// Client: reads the devices every frame — move and buttons into <see cref="LocalInputBuffer"/>,
+    /// which the next tick samples and sends (Docs/05 §Input), pointer movement into the body's
+    /// <see cref="PlayerLookInput"/>. Reads only — what the input means is decided by the systems
+    /// that consume it.
     /// </summary>
     /// <remarks>
     /// <b>Separate from <c>PlayerLookSystem</c> on purpose:</b> this half touches real devices and
@@ -21,10 +24,10 @@ namespace Features.PlayerFeature.Systems
     /// </remarks>
     public sealed class PlayerInputSystem : ISystem
     {
-        [Inject] private Stash<CharacterIntent> _characterIntent;
         [Inject] private Stash<PlayerLookInput> _playerLookInput;
 
         [Inject] private PlayerInputService _input;
+        [Inject] private LocalInputBuffer _buffer;
         [Inject] private SubscriberQueue<ResumePlay> _resumePlay;
 
         public World World { get; set; }
@@ -35,7 +38,6 @@ namespace Features.PlayerFeature.Systems
         {
             _filter = World.Filter
                 .With<Player>()
-                .With<CharacterIntent>()
                 .With<PlayerLookInput>()
                 .Build();
         }
@@ -53,25 +55,45 @@ namespace Features.PlayerFeature.Systems
 
             _input.UpdateCursor();
 
+            float2 move = (Vector2)_input.Move.ReadValue<Vector2>();
+            var held = InputButtons.None;
+            if (_input.Sprint.IsPressed())
+            {
+                held |= InputButtons.Sprint;
+            }
+
+            if (_input.Fire.IsPressed())
+            {
+                held |= InputButtons.Fire;
+            }
+
+            if (_input.Aim.IsPressed())
+            {
+                held |= InputButtons.Aim;
+            }
+
+            // Latches: kept by the buffer until a tick samples them.
+            var pressed = InputButtons.None;
+            if (_input.Jump.WasPressedThisFrame())
+            {
+                pressed |= InputButtons.Jump;
+            }
+
+            if (_input.Fire.WasPressedThisFrame())
+            {
+                pressed |= InputButtons.FirePressed;
+            }
+
+            _buffer.WriteMove(PlayerInputCodec.EncodeAxis(move.x), PlayerInputCodec.EncodeAxis(move.y), held, pressed);
+
+            if (!_input.LookCaptured)
+            {
+                return;
+            }
+
             foreach (var entity in _filter)
             {
-                ref var intent = ref _characterIntent.Get(entity);
-
-                float2 move = (Vector2)_input.Move.ReadValue<Vector2>();
-                intent.Move = math.lengthsq(move) > 1f ? math.normalize(move) : move;
-
-                intent.Sprint = _input.Sprint.IsPressed();
-                intent.Fire = _input.Fire.IsPressed();
-                intent.Aim = _input.Aim.IsPressed();
-
-                // Latches: set here, cleared by whoever acts on them.
-                intent.JumpPressed |= _input.Jump.WasPressedThisFrame();
-                intent.FirePressed |= _input.Fire.WasPressedThisFrame();
-
-                if (_input.LookCaptured)
-                {
-                    _playerLookInput.Get(entity).Delta += (float2)(Vector2)_input.Look.ReadValue<Vector2>();
-                }
+                _playerLookInput.Get(entity).Delta += (float2)(Vector2)_input.Look.ReadValue<Vector2>();
             }
         }
     }

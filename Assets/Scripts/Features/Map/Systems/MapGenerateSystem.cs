@@ -7,6 +7,7 @@ using Features.Map.Configs;
 using Features.Map.Constants;
 using Features.Map.Messages;
 using Features.Map.Utils;
+using Features.Network.Systems;
 using Scellecs.Morpeh;
 
 namespace Features.Map.Systems
@@ -25,6 +26,7 @@ namespace Features.Map.Systems
         [Inject] private SubscriberQueue<GenerateMap> _generateMap;
         [Inject] private MapConfig _config;
         [Inject] private MapStorage _storage;
+        [Inject] private NetRole _role;
 
         public World World { get; set; }
 
@@ -62,8 +64,14 @@ namespace Features.Map.Systems
                 requested = true;
             }
 
+            // A client builds the server's arena: its seed comes from the snapshot as a request.
             foreach (var message in _generateMap)
             {
+                if (_role.IsClient)
+                {
+                    continue;
+                }
+
                 seed = message.Seed;
                 requested = true;
             }

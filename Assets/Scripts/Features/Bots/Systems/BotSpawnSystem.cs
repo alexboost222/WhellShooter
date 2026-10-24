@@ -28,6 +28,7 @@ namespace Features.Bots.Systems
         [Inject] private Stash<BotPath> _botPath;
         [Inject] private Stash<BotAim> _botAim;
         [Inject] private Stash<Character> _character;
+        [Inject] private Stash<Avatar> _avatar;
         [Inject] private Stash<CharacterIntent> _characterIntent;
         [Inject] private Stash<CharacterMotion> _characterMotion;
         [Inject] private Stash<CharacterTeleportRequest> _characterTeleportRequest;
@@ -104,6 +105,7 @@ namespace Features.Bots.Systems
 
             var yaw = math.radians(point.Yaw);
             _character.Set(entity);
+            _avatar.Set(entity);
             _characterIntent.Set(entity, default);
             _characterMotion.Set(entity, new CharacterMotion { Position = point.Position, PreviousPosition = point.Position });
             _look.Set(entity, new Look { Yaw = yaw });

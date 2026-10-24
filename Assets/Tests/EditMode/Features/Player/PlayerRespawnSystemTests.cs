@@ -7,7 +7,6 @@ using NUnit.Framework;
 using Scellecs.Morpeh;
 using Unity.Mathematics;
 using UnityEngine;
-using PlayerTag = Features.PlayerFeature.Components.Player;
 
 namespace Game.Tests.EditMode.Features.Player
 {
@@ -38,7 +37,7 @@ namespace Game.Tests.EditMode.Features.Player
         public void ADeadPlayer_ComesBackOnTheSpawnPoint_AfterTheDelay()
         {
             var body = _world.World.CreateEntity();
-            _world.Set(body, new PlayerTag());
+            _world.Set(body, new NetPlayer());
             _world.Set(body, new Dead());
 
             _world.Tick(0.5f, 10);
@@ -58,7 +57,7 @@ namespace Game.Tests.EditMode.Features.Player
         public void ALivePlayer_IsLeftAlone()
         {
             var body = _world.World.CreateEntity();
-            _world.Set(body, new PlayerTag());
+            _world.Set(body, new NetPlayer());
 
             _world.Tick(0.5f, 10);
 

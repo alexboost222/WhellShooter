@@ -170,7 +170,9 @@ minimal `Engine/Diagnostics` (`Log`, `Guard`, `MainThread`).
 phys-r into ECS (Docs/11).
 Own: `Engine/Net` (`INetTransport`, `LiteNetTransport`, `LoopbackNetwork`,
 `LinkConditioner`), `Engine/Runtime/TickAccumulator`, `Features/Network`
-(server/client tick sync + input delivery, Docs/05). MPPM 2.0: the role comes from the play mode
+(server/client tick sync + input delivery, Docs/05), `Features/Replication`
+(dedicated server snapshots, client prediction of its own body, remote bodies
+interpolated; features install per `NetRole`, Docs/05). MPPM 2.0: the role comes from the play mode
 scenario's multiplayer role (`Server_Client`), else `NetConfig.Mode`.
 `Meta/Bootstrap.cs` is the composition root; `Meta/Features.cs` is the ordered
 feature list, with `EntitiesDestroyFeature` last.

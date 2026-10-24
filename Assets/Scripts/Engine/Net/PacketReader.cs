@@ -1,3 +1,5 @@
+using System;
+
 namespace Engine.Net
 {
     /// <summary>
@@ -72,6 +74,16 @@ namespace Engine.Net
         public uint ReadUInt()
         {
             return (uint)ReadInt();
+        }
+
+        public ushort ReadUShort()
+        {
+            return (ushort)ReadShort();
+        }
+
+        public float ReadFloat()
+        {
+            return BitConverter.Int32BitsToSingle(ReadInt());
         }
 
         private bool Take(int bytes)

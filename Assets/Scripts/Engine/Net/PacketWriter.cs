@@ -53,6 +53,16 @@ namespace Engine.Net
             WriteInt((int)value);
         }
 
+        public void WriteUShort(ushort value)
+        {
+            WriteShort((short)value);
+        }
+
+        public void WriteFloat(float value)
+        {
+            WriteInt(BitConverter.SingleToInt32Bits(value));
+        }
+
         private void Ensure(int bytes)
         {
             if (Length + bytes > _buffer.Length)

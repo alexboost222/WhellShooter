@@ -15,7 +15,7 @@ namespace Features.Network.Systems
     /// <summary>
     /// Client: polls the transport, applies <c>Sync</c> packets (ack, RTT, loss) and decides from
     /// the server's slack samples whether the tick must jump or hold (Docs/05). The tick system
-    /// executes the decision in the same step.
+    /// executes the decision in the same step. <c>Snapshot</c> packets go to <see cref="NetInbox"/>.
     /// </summary>
     public sealed class ClientReceiveSystem : ISystem
     {
@@ -23,6 +23,7 @@ namespace Features.Network.Systems
         [Inject] private Stash<ClientSync> _clientSync;
 
         [Inject] private INetTransport _transport;
+        [Inject] private NetInbox _inbox;
         [Inject] private NetConfig _config;
 
         public World World { get; set; }
@@ -78,7 +79,14 @@ namespace Features.Network.Systems
         private void Receive(ref NetClock clock, ref ClientSync sync, byte[] data, int maxLead)
         {
             var reader = new PacketReader(data);
-            if ((PacketType)reader.ReadByte() != PacketType.Sync || !Packets.TryReadSync(ref reader, out var packet))
+            var type = (PacketType)reader.ReadByte();
+            if (type == PacketType.Snapshot)
+            {
+                _inbox.Packets.Add(data);
+                return;
+            }
+
+            if (type != PacketType.Sync || !Packets.TryReadSync(ref reader, out var packet))
             {
                 return;
             }

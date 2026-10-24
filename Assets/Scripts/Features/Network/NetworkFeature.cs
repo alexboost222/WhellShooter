@@ -14,8 +14,10 @@ namespace Features.Network
         public override void Register()
         {
             AddInitializer(Container.New<NetSessionStorage>());
+            var role = Container.Register(new NetRole(Container.Resolve<INetTransport>().IsServer));
+            Container.Register(new NetInbox());
 
-            if (Container.Resolve<INetTransport>().IsServer)
+            if (role.IsServer)
             {
                 AddSystem(RunnerPhase.FixedUpdate, Container.New<ServerTickSystem>());
                 AddSystem(RunnerPhase.FixedUpdate, Container.New<ServerReceiveSystem>());

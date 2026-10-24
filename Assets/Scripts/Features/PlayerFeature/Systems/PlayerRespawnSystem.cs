@@ -4,17 +4,17 @@ using Features.Combat.Components;
 using Features.PlayerFeature.Components;
 using Features.PlayerFeature.Configs;
 using Scellecs.Morpeh;
-using Unity.Mathematics;
 
 namespace Features.PlayerFeature.Systems
 {
     /// <summary>
-    /// Brings the dead player back after <see cref="PlayerConfig.RespawnDelay"/>: a teleport to the
-    /// first spawn point and a <see cref="ReviveRequest"/> (Combat refills the health) — the same
-    /// way bots come back.
+    /// Server: brings a dead player back after <see cref="PlayerConfig.RespawnDelay"/>: a teleport to
+    /// its spawn slot and a <see cref="ReviveRequest"/> (Combat refills the health) — the same way
+    /// bots come back.
     /// </summary>
     public sealed class PlayerRespawnSystem : ISystem
     {
+        [Inject] private Stash<NetPlayer> _netPlayer;
         [Inject] private Stash<PlayerRespawn> _playerRespawn;
         [Inject] private Stash<ReviveRequest> _reviveRequest;
         [Inject] private Stash<CharacterTeleportRequest> _characterTeleportRequest;
@@ -29,7 +29,7 @@ namespace Features.PlayerFeature.Systems
         public void OnAwake()
         {
             _filter = World.Filter
-                .With<Player>()
+                .With<NetPlayer>()
                 .With<Dead>()
                 .Build();
         }
@@ -50,17 +50,17 @@ namespace Features.PlayerFeature.Systems
 
                 ref var respawn = ref _playerRespawn.Get(entity);
                 respawn.Remaining -= deltaTime;
-                if (respawn.Remaining > 0f || !_spawnPoints.TryGetFirst(out var point))
+                if (respawn.Remaining > 0f ||
+                    !_spawnPoints.TryGetSpawn(_netPlayer.Get(entity).Peer, out var position, out var yaw))
                 {
                     continue;
                 }
 
-                float3 forward = point.forward;
                 _playerRespawn.Remove(entity);
                 _characterTeleportRequest.Set(entity, new CharacterTeleportRequest
                 {
-                    Position = point.position,
-                    Yaw = math.atan2(forward.x, forward.z),
+                    Position = position,
+                    Yaw = yaw,
                 });
                 _reviveRequest.Set(entity);
             }

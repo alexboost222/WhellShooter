@@ -310,9 +310,10 @@ namespace Game.Tests.EditMode.Features.Network
                 {
                     MoveX = (sbyte)(_count * 7 + _salt),
                     MoveY = (sbyte)(_count * 13),
-                    LookYaw = (short)(_count * 31 + _salt * 1000),
+                    LookYaw = (ushort)(_count * 31 + _salt * 1000),
                     LookPitch = (short)(_count >> 3),
                     Buttons = (byte)(_count & 3),
+                    ViewDelay = (byte)(_count % 5),
                 };
             }
         }

@@ -12,6 +12,7 @@ using Features.Map;
 using Features.Navigation;
 using Features.Network;
 using Features.PlayerFeature;
+using Features.Replication;
 using Features.Tracers;
 using Features.ViewmodelFeature;
 using Features.WeaponsFeature;
@@ -93,6 +94,9 @@ namespace Meta
             Register<CombatFeature>();
             Register<CharacterFeature>();
             Register<WeaponsFeature>();
+            // Server: snapshots of this tick's result. Client: the server's state applied, the local
+            // body corrected, the remote ones drawn in the past (Docs/05).
+            Register<ReplicationFeature>();
 
             // ---- views ----
             Register<ViewmodelFeature>();

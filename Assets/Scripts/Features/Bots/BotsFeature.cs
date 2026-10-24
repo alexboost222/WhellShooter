@@ -1,6 +1,7 @@
 using Engine.Ecs;
 using Engine.Runtime;
 using Features.Bots.Systems;
+using Features.Network.Systems;
 
 namespace Features.Bots
 {
@@ -14,7 +15,7 @@ namespace Features.Bots
     /// this tick's world, and the motor and weapon act on that decision in the same tick.
     /// <para>
     /// FixedUpdate, in order: spawn → respawn → senses → think → bids → decide → executors → path →
-    /// steer → aim. Update: view hydration, animator.
+    /// steer → aim. Update: view hydration, animator. A client installs the views only.
     /// </para>
     /// </remarks>
     public sealed class BotsFeature : EcsFeature
@@ -24,6 +25,16 @@ namespace Features.Bots
             AddInitializer(Container.NewAndRegister<BotActionSet>());
             AddInitializer(Container.NewAndRegister<BotSpawnSelector>());
             Container.Register(new BotViewFactory(Container));
+
+            // Views on both sides: on a client they draw the replicated bots and players (Docs/05).
+            AddSystem(RunnerPhase.Update, Container.New<BotViewSpawnSystem>());
+            AddSystem(RunnerPhase.Update, Container.New<BotAnimatorSystem>());
+
+            // The brains run on the server only.
+            if (Container.Resolve<NetRole>().IsClient)
+            {
+                return;
+            }
 
             AddSystem(RunnerPhase.FixedUpdate, Container.New<BotSpawnSystem>());
             AddSystem(RunnerPhase.FixedUpdate, Container.New<BotRespawnSystem>());
@@ -45,9 +56,6 @@ namespace Features.Bots
             AddSystem(RunnerPhase.FixedUpdate, Container.New<BotPathSystem>());
             AddSystem(RunnerPhase.FixedUpdate, Container.New<BotSteerSystem>());
             AddSystem(RunnerPhase.FixedUpdate, Container.New<BotAimSystem>());
-
-            AddSystem(RunnerPhase.Update, Container.New<BotViewSpawnSystem>());
-            AddSystem(RunnerPhase.Update, Container.New<BotAnimatorSystem>());
         }
     }
 }

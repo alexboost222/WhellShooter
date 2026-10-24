@@ -7,7 +7,8 @@ namespace Features.KillCam.Systems
 {
     /// <summary>
     /// Right after the physics step (<c>RunnerPhase.AfterPhysics</c>): one frame of every body into
-    /// <see cref="KillCamStorage"/> — feet, velocity, look, grounded, dead.
+    /// <see cref="KillCamStorage"/> — feet, velocity, look, grounded, dead. Remote bodies on a
+    /// client count too: they have motion and look but no <c>Character</c>.
     /// </summary>
     public sealed class KillCamRecordSystem : ISystem
     {
@@ -24,7 +25,6 @@ namespace Features.KillCam.Systems
         public void OnAwake()
         {
             _filter = World.Filter
-                .With<Character>()
                 .With<CharacterMotion>()
                 .With<Look>()
                 .Build();
