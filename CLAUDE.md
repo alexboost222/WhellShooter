@@ -34,6 +34,7 @@ where it applies:
 | `08-gameplay` | **what the game does**: feature roster, tuning numbers |
 | `09-roadmap-and-open-design` | **not law** — unsettled design, open questions |
 | `10-build-and-release` | Android/iOS builds, signing, store upload |
+| `11-physics` | phys-r: the world service, the physics hook, the Bodies ECS bridge |
 
 Once a doc exists it is law: if implementation genuinely fights it, say so and
 amend the doc in the same change — never silently diverge.
@@ -49,8 +50,13 @@ URP 17.3, Input System 1.19, Test Framework 1.6, UGUI (+TMP), and:
 - `com.unity.pipeline` — the official Unity CLI bridge used for editor automation.
 
 Project settings carried over from dacha: Enter Play Mode Options with domain
-and scene reload **disabled**, physics `SimulationMode.Script` (the Runner
-calls `Physics.Simulate`).
+and scene reload **disabled**, PhysX in `SimulationMode.Script` and never
+stepped.
+
+- **`com.physr.engine`** (embedded in `Packages/`) — phys-r, deterministic
+  fixed-point physics in Rust (`Docs/11-physics.md`). It *is* the simulation's
+  physics; game code never uses `UnityEngine.Physics`, `Rigidbody`,
+  `CharacterController` or colliders.
 
 ## Layout
 
@@ -107,7 +113,7 @@ supplies only what the folder path doesn't (`Engine` asmdef → empty).
 - **Nothing disposes entities mid-tick** — tag `Destroy`; the last feature
   disposes them.
 - **The Runner owns the loop.** Morpeh is driven manually, phases
-  `FixedUpdate` (simulation + manual `Physics.Simulate`, `SimulationMode.Script`)
+  `FixedUpdate` (simulation, then the phys-r physics hook — Docs/11)
   / `Update` (views) / `LateUpdate` (only when an Animator fights the view).
   Morpeh commits after each system. Game code never touches the Unity loop.
   The fixed step is Unity's own (`ProjectSettings/TimeManager`); the Runner
@@ -156,6 +162,8 @@ Ported from dacha (adapted: no netcode, no metrics, no TimeService):
 `ConfigCatalog`, `ConfigResolver`, `ConfigIds`), `Engine/Ecs` (`EcsFeature`,
 `StashResolver`, `SystemsGroupStep`, `Destroy`), `Engine/Disposables`, and a
 minimal `Engine/Diagnostics` (`Log`, `Guard`, `MainThread`).
+`Engine/Physics` (`PhysicsWorld`, `PhysicsStep`) and `Features/Bodies` bridge
+phys-r into ECS (Docs/11).
 `Meta/Bootstrap.cs` is the composition root; `Meta/Features.cs` is the ordered
 feature list, with `EntitiesDestroyFeature` last.
 
