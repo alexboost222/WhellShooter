@@ -6,7 +6,8 @@
         "UniTask",
         "Unity.Mathematics",
         "UnityEngine.UI",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "PhysR.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

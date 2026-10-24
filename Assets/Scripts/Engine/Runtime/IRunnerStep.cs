@@ -20,7 +20,7 @@ namespace Engine.Runtime
     }
 
     /// <summary>Wraps a delegate as a step — for the small pumps that aren't worth a class.</summary>
-    /// <example><c>runner.PhysicsHook = RunnerStep.Create("Physics.Simulate", Physics.Simulate);</c></example>
+    /// <example><c>runner.Add(RunnerPhase.Update, RunnerStep.Create("Log.Flush", _ => UnityConsoleSink.Flush()));</c></example>
     public sealed class RunnerStep : IRunnerStep
     {
         private readonly string _name;

@@ -3,6 +3,7 @@ using Engine.DI;
 using Engine.Diagnostics.Logs;
 using Engine.Ecs;
 using Engine.Messages;
+using Engine.Physics;
 using Engine.Runtime;
 using Scellecs.Morpeh;
 using UnityEngine;
@@ -33,6 +34,7 @@ namespace Meta
         private static Container _container;
         private static World _world;
         private static Runner _runner;
+        private static PhysicsWorld _physics;
         private static UnityRunnerDriver _driver;
 
         /// <summary>The live container, for tests and tooling only. Null outside play mode.</summary>
@@ -59,10 +61,14 @@ namespace Meta
             var bus = new MessageBus();
             _runner = new Runner(bus);
 
+            // phys-r, ticking at Unity's fixed step (Docs/11). Stepped by the bodies feature's hook.
+            _physics = new PhysicsWorld(PhysicsWorld.TickRateOf(Time.fixedDeltaTime));
+
             _container.Register(catalog);
             _container.Register(_world);
             _container.Register(bus);
             _container.Register(_runner);
+            _container.Register(_physics);
             _container.Register<ISceneLoader>(new SceneLoader());
 
             // 3. Resolvers, in priority order — first match wins, InstanceResolver is always first.
@@ -120,8 +126,11 @@ namespace Meta
 
             UnityConsoleSink.Flush();
             _world?.Dispose();
+            // After the ECS world: systems are disposed first and may still hold native handles.
+            _physics?.Dispose();
 
             _driver = null;
+            _physics = null;
             _runner = null;
             _world = null;
             _container = null;

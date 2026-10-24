@@ -5,7 +5,7 @@ namespace Engine.Runtime
     /// </summary>
     public enum RunnerPhase : byte
     {
-        /// <summary>Every fixed tick: simulation systems, followed by <c>Physics.Simulate</c>.</summary>
+        /// <summary>Every fixed tick: simulation systems, followed by the physics step (phys-r, Docs/11).</summary>
         FixedUpdate = 0,
 
         /// <summary>Every frame: view and presentation systems.</summary>

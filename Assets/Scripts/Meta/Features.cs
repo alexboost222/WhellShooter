@@ -2,8 +2,10 @@ using Engine.DI;
 using Engine.Diagnostics;
 using Engine.Diagnostics.Logs;
 using Engine.Runtime;
+using Features.Bodies;
 using Features.DestroyFeature;
 using Features.Map;
+using Features.Navigation;
 
 namespace Meta
 {
@@ -60,8 +62,13 @@ namespace Meta
         private static void Registrations()
         {
             // ---- gameplay ----
+            // phys-r bridge: bodies and characters from requests; installs the physics hook, so
+            // its systems run after every FixedUpdate step whatever its place here (Docs/11).
+            Register<BodiesFeature>();
             // The arena: layout, spawn points (registers MapStorage).
             Register<MapFeature>();
+            // Walkability, paths and line of sight over the arena (registers NavStorage).
+            Register<NavigationFeature>();
 
             // ---- last ----
             // Disposes everything tagged Destroy at the end of the tick. Must stay last.
