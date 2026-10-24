@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 using Engine.Diagnostics.Logs;
 using LiteNetLib;
 
@@ -56,12 +58,18 @@ namespace Engine.Net
 
             if (IsServer)
             {
-                if (!_manager.Start(_port))
+                if (!IPAddress.TryParse(_address, out var bind) || bind.AddressFamily != AddressFamily.InterNetwork)
                 {
-                    throw Log.Fail(LogChannels.Net, $"Server could not listen on UDP {_port}.");
+                    throw Log.Fail(LogChannels.Net, $"Server bind address '{_address}' is not an IPv4 address.");
                 }
 
-                Log.Info(LogChannels.Net, $"Server listening on UDP {_port}.");
+                _manager.IPv6Enabled = false;
+                if (!_manager.Start(bind, IPAddress.IPv6Any, _port))
+                {
+                    throw Log.Fail(LogChannels.Net, $"Server could not listen on UDP {_address}:{_port}.");
+                }
+
+                Log.Info(LogChannels.Net, $"Server listening on UDP {_address}:{_port}.");
             }
             else
             {

@@ -1,5 +1,6 @@
 using Engine.Configs;
 using Engine.Net;
+using Features.Network.Enums;
 using UnityEngine;
 
 namespace Features.Network.Configs
@@ -9,7 +10,12 @@ namespace Features.Network.Configs
     public sealed class NetConfig : Config
     {
         [Header("Connection")]
+        [Tooltip("Role outside an MPPM scenario and without -server / -client.")]
+        public NetMode Mode = NetMode.Server;
+
+        [Tooltip("Server: IPv4 to listen on (0.0.0.0 = every interface, for LAN). Client: server to connect to.")]
         public string Address = "127.0.0.1";
+
         public int Port = 7777;
         public string ConnectionKey = "WheelShooter";
 

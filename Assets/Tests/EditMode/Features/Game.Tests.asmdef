@@ -9,7 +9,8 @@
         "Unity.Mathematics",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "PhysR.Runtime"
+        "PhysR.Runtime",
+        "Unity.DedicatedServer.MultiplayerRoles"
     ],
     "includePlatforms": [
         "Editor"

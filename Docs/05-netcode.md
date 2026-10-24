@@ -31,10 +31,17 @@ The registered `INetTransport` (`IsServer`) decides the role; `NetworkFeature`
 installs the server or the client systems. Meta (`NetComposition`) picks:
 
 1. command line `-server` / `-client`;
-2. MPPM player tag `Server` / `Client`;
-3. editor: `CurrentPlayer.IsMainEditor` → server, so **the main editor is the
-   server and MPPM virtual players are clients**; player build: server only in
-   batch mode.
+2. editor only: the MPPM multiplayer role of this instance
+   (`MultiplayerRolesManager.ActiveMultiplayerRoleMask`, `com.unity.dedicated-server`),
+   set per instance by the play mode scenario —
+   `Assets/Settings/PlayMode/Server_Client.asset`: main editor = Server,
+   Player 2 = Client. `ClientAndServer` (no scenario role) falls through;
+3. `NetConfig.Mode`.
+
+`NetConfig.Address:Port` is the server's IPv4 bind address (`0.0.0.0` = every
+interface, needed for LAN) and the client's connect target; `-address <ip>`
+overrides it. A LAN friend runs a player build with
+`-client -address <server LAN IP>`.
 
 ## Packets
 
