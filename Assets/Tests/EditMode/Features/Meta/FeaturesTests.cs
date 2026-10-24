@@ -25,11 +25,13 @@ namespace Game.Tests.EditMode.Features.Meta
             _runner = new Runner(bus);
 
             var container = new Container();
-            var catalog = new ConfigCatalog(new Config[0]);
+            // The real configs: features inject them, and boot is the validation pass.
+            var catalog = ConfigCatalog.FromResources();
             container.Register(catalog);
             container.Register(_world);
             container.Register(bus);
             container.Register(_runner);
+            container.Register(new TimeService()).Install(_runner);
             container.AddResolver(new ConfigResolver(catalog));
             container.AddResolver(new StashResolver(_world));
             container.AddResolver(new MessagePipeResolver(bus));

@@ -65,6 +65,10 @@ namespace Meta
             _container.Register(_runner);
             _container.Register<ISceneLoader>(new SceneLoader());
 
+            // First in FixedUpdate and in Update, so every system in a phase reads the same time.
+            var time = _container.Register(new TimeService());
+            time.Install(_runner);
+
             // 3. Resolvers, in priority order — first match wins, InstanceResolver is always first.
             _container.AddResolver(new ConfigResolver(catalog));
             _container.AddResolver(new StashResolver(_world));

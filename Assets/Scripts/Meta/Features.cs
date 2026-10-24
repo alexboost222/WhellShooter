@@ -2,7 +2,11 @@ using Engine.DI;
 using Engine.Diagnostics;
 using Engine.Diagnostics.Logs;
 using Engine.Runtime;
+using Features.CharacterFeature;
 using Features.DestroyFeature;
+using Features.PlayerFeature;
+using Features.ViewmodelFeature;
+using Features.WeaponsFeature;
 
 namespace Meta
 {
@@ -59,6 +63,14 @@ namespace Meta
         private static void Registrations()
         {
             // ---- gameplay ----
+
+            // Drivers of bodies first, so what they ask for this tick/frame is what the body does.
+            Register<PlayerFeature>();
+            Register<CharacterFeature>();
+            Register<WeaponsFeature>();
+
+            // ---- views ----
+            Register<ViewmodelFeature>();
 
             // ---- last ----
             // Disposes everything tagged Destroy at the end of the tick. Must stay last.

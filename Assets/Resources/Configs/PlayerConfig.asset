@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 426225c14815e4d41a2f9b2d2987882a, type: 3}
+  m_Name: PlayerConfig
+  m_EditorClassIdentifier: Game::Features.PlayerFeature.Configs.PlayerConfig
+  viewPrefab: {fileID: 8133231960579739844, guid: ddec7f2ec123d4e4e971949d326fcef1, type: 3}
+  inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  lookSensitivity: 0.08
+  pitchLimit: 85
