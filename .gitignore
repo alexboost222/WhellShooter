@@ -69,3 +69,6 @@ crashlytics-build.properties
 # OS
 .DS_Store
 Thumbs.db
+
+# Agent worktrees (EnterWorktree / isolation: worktree) — never part of the repo
+.claude/worktrees/

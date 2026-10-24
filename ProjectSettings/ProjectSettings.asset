@@ -836,7 +836,7 @@ PlayerSettings:
   scriptingDefineSymbols:
     Android: MORPEH_BURST;MORPEH
     Standalone: MORPEH_BURST;MORPEH
-    iPhone: MORPEH
+    iPhone: MORPEH;MORPEH_BURST
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
