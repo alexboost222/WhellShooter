@@ -5,17 +5,22 @@ code in this repository.
 
 ## What this is
 
-**WheelShooter** — a mobile game (Unity 6000.3.14f1, URP, Input System).
+**WheelShooter** — a fast-paced first-person co-op shooter demo with a
+dedicated server and one or more clients (Unity 6000.3.14f1, URP, Input System).
 The repo is at the very start: the Engine core and Bootstrap exist (see *What
 exists*), no gameplay yet. Everything below is the architecture carried over
 from `~/personal/dacha-simulator` (`dev-2`), where it is designed and proven. When a rule here is unclear, the matching
 `dacha-simulator/Docs/` page explains why it exists — read it, but do not copy
-dacha's game-specific parts (Steam, netcode, co-op sessions, persistence
-details) unless WheelShooter actually needs them.
+dacha's game-specific parts (Steam, persistence details) unless WheelShooter
+actually needs them. Netcode and co-op sessions **are** needed (dedicated
+server + clients) — use dacha's as the reference.
+
+**Game design:** [`Docs/08-gameplay.md`](Docs/08-gameplay.md) — co-op FPS
+demo, dedicated server, procedural runs between safe zones.
 
 ## Docs first
 
-Architecture is designed docs-first in **`Docs/`** (not yet created). Each area
+Architecture is designed docs-first in **`Docs/`**. Each area
 gets its doc **before** its first implementation, mirroring dacha's numbering
 where it applies:
 
