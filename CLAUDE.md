@@ -6,10 +6,9 @@ code in this repository.
 ## What this is
 
 **WheelShooter** — a mobile game (Unity 6000.3.14f1, URP, Input System).
-The repo is at the very start: a clean URP mobile template with one
-`SampleScene`. There is no code yet, so everything below is the **target
-architecture**, carried over from `~/personal/dacha-simulator` (`dev-2`), where
-it is designed and proven. When a rule here is unclear, the matching
+The repo is at the very start: the Engine core and Bootstrap exist (see *What
+exists*), no gameplay yet. Everything below is the architecture carried over
+from `~/personal/dacha-simulator` (`dev-2`), where it is designed and proven. When a rule here is unclear, the matching
 `dacha-simulator/Docs/` page explains why it exists — read it, but do not copy
 dacha's game-specific parts (Steam, netcode, co-op sessions, persistence
 details) unless WheelShooter actually needs them.
@@ -34,15 +33,19 @@ where it applies:
 Once a doc exists it is law: if implementation genuinely fights it, say so and
 amend the doc in the same change — never silently diverge.
 
-## Stack (to add when the first code lands)
+## Stack
 
-Currently installed: URP 17.3, Input System 1.19, Test Framework 1.6, UGUI.
-To add, at dacha's pinned versions:
+URP 17.3, Input System 1.19, Test Framework 1.6, UGUI (+TMP), and:
 
-- **`com.scellecs.morpeh` 2024.1.1** — exactly this; the `2025.x` API is
-  incompatible with every convention below (no `SystemsGroup`, `IDataComponent`).
-- `com.unity.mathematics`, `com.cysharp.unitask`.
+- **`com.scellecs.morpeh` 2024.1.1** (OpenUPM) — exactly this; the `2025.x`
+  API is incompatible with every convention below (no `SystemsGroup`,
+  `IDataComponent`).
+- `com.unity.mathematics` 1.3.3, `com.cysharp.unitask` 2.5.11 (OpenUPM).
 - `com.unity.pipeline` — the official Unity CLI bridge used for editor automation.
+
+Project settings carried over from dacha: Enter Play Mode Options with domain
+and scene reload **disabled**, physics `SimulationMode.Script` (the Runner
+calls `Physics.Simulate`).
 
 ## Layout
 
@@ -101,9 +104,13 @@ supplies only what the folder path doesn't (`Engine` asmdef → empty).
 - **The Runner owns the loop.** Morpeh is driven manually, phases
   `FixedUpdate` (simulation + manual `Physics.Simulate`, `SimulationMode.Script`)
   / `Update` (views) / `LateUpdate` (only when an Animator fights the view).
-  `World.Commit()` after each system. Game code never touches the Unity loop.
+  Morpeh commits after each system. Game code never touches the Unity loop.
+  The fixed step is Unity's own (`ProjectSettings/TimeManager`); the Runner
+  keeps no clock.
 - **No `Time.*` / `Random.*` statics in systems** — inject `TimeService` /
-  the seeded random service.
+  the seeded random service. (Neither exists yet: `TimeService` was
+  deliberately left out of the Engine port — design it before the first system
+  that needs time.)
 - **`Unity.Mathematics` inside ECS** (`float3`, `quaternion`, `math.*`);
   `Vector3`/`Quaternion` only at the Provider/view boundary.
 - **Components store ids** (config ids, entity ids) — never SO references,
@@ -135,6 +142,17 @@ supplies only what the folder path doesn't (`Engine` asmdef → empty).
   (properties are fine). Systems are `sealed`.
 - **`Filter.IsEmpty()` is not "no entities"** — use `FirstOrDefault() != null`
   or `GetLengthSlow()`.
+
+## What exists
+
+Ported from dacha (adapted: no netcode, no metrics, no TimeService):
+`Engine/DI`, `Engine/Messages`, `Engine/Runtime` (Runner, `Feature`,
+`UnityRunnerDriver`, `SceneLoader`), `Engine/Configs` (core: `Config`,
+`ConfigCatalog`, `ConfigResolver`, `ConfigIds`), `Engine/Ecs` (`EcsFeature`,
+`StashResolver`, `SystemsGroupStep`, `Destroy`), `Engine/Disposables`, and a
+minimal `Engine/Diagnostics` (`Log`, `Guard`, `MainThread`).
+`Meta/Bootstrap.cs` is the composition root; `Meta/Features.cs` is the ordered
+feature list, with `EntitiesDestroyFeature` last.
 
 ## Workflow constraints
 

@@ -1,0 +1,20 @@
+{
+    "name": "Engine",
+    "rootNamespace": "",
+    "references": [
+        "Scellecs.Morpeh",
+        "UniTask",
+        "Unity.Mathematics",
+        "UnityEngine.UI",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

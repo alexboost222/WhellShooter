@@ -75,8 +75,12 @@ summary and failures with `jq`:
 
 Pull a `StackTrace` only for the failure you're actually investigating.
 
-For a full run, `--async_tests true` returns immediately; poll with
-`unity command test status --result-only`. `unity command test cancel`
+**PlayMode must run async** — entering play mode reloads the domain and drops
+a synchronous request (it comes back as `Total: 0` with an error). Run
+`unity command test run --mode PlayMode --async_tests true --result-only` and
+poll `unity command test status --result-only` until `status` is `completed`
+(its keys are lowercase: `.summary`, `.results`). `--async_tests true` also
+suits a long EditMode run. `unity command test cancel`
 releases a wedged Test Runner. `unity command test list --mode EditMode
 --result-only` lists tests without running them (`jq` on `.Tests[].Assembly`
 for counts).
