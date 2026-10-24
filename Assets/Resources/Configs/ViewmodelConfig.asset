@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game::Features.ViewmodelFeature.Configs.ViewmodelConfig
   hipFieldOfView: 70
   sprintFieldOfView: 4
-  motionFrequency: 2
+  motionFrequency: 5
   motionDamping: 0.55
   recoilFrequency: 9
   recoilDamping: 0.45
@@ -30,7 +30,7 @@ MonoBehaviour:
   fallLag: 0.003
   maxFallLag: 0.04
   bobFullSpeed: 4.5
-  walkStepLength: 0.85
+  walkStepLength: 1.2
   sprintStepLength: 1.25
   bobPosition: {x: 0.011, y: 0.008}
   bobRotation: {x: 0.6, y: 0.5, z: 1}
