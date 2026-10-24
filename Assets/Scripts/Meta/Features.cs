@@ -3,6 +3,7 @@ using Engine.Diagnostics;
 using Engine.Diagnostics.Logs;
 using Engine.Runtime;
 using Features.DestroyFeature;
+using Features.Map;
 
 namespace Meta
 {
@@ -59,6 +60,8 @@ namespace Meta
         private static void Registrations()
         {
             // ---- gameplay ----
+            // The arena: layout, spawn points (registers MapStorage).
+            Register<MapFeature>();
 
             // ---- last ----
             // Disposes everything tagged Destroy at the end of the tick. Must stay last.
