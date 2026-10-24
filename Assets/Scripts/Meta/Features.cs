@@ -10,6 +10,7 @@ using Features.DestroyFeature;
 using Features.KillCam;
 using Features.Map;
 using Features.Navigation;
+using Features.Network;
 using Features.PlayerFeature;
 using Features.Tracers;
 using Features.ViewmodelFeature;
@@ -71,6 +72,10 @@ namespace Meta
 
         private static void Registrations()
         {
+            // ---- infrastructure ----
+            // Server: tick, receive, consume input, send. Client: receive, tick, sample + send input.
+            Register<NetworkFeature>();
+
             // ---- gameplay ----
             // phys-r bridge: bodies and characters from requests; installs the physics hook, so
             // its systems run after every FixedUpdate step whatever its place here (Docs/11).

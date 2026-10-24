@@ -46,6 +46,9 @@ namespace Engine.Diagnostics.Logs
         /// </remarks>
         public static readonly LogChannel Localization = LogChannel.Get("Localization");
 
+        /// <summary>Transport, connections, tick sync, input traffic.</summary>
+        public static readonly LogChannel Net = LogChannel.Get("Net");
+
         /// <summary>Touches every field, forcing registration. Tooling calls this so the
         /// channel list is complete before anything has logged.</summary>
         public static void Touch()
@@ -60,6 +63,7 @@ namespace Engine.Diagnostics.Logs
             _ = Render;
             _ = Audio;
             _ = Localization;
+            _ = Net;
         }
     }
 }

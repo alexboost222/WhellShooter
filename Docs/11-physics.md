@@ -128,6 +128,7 @@ occluder wants. For the raw API (batched rays, rewinds, sweeps, overlaps) use
 | Platform | File | Built by |
 |---|---|---|
 | macOS (Editor, standalone) | `Plugins/macOS/libphysr.dylib` (universal) | `scripts/build-unity-plugins.sh macos` in phys-r |
+| Windows x64 (Editor, standalone) | `Plugins/Windows/x86_64/physr.dll` | `… windows` (MSVC) |
 | Android | `Plugins/Android/<abi>/libphysr.so` | `… android` (NDK + `cargo-ndk`) — **not built yet** |
 | iOS | `Plugins/iOS/libphysr.a` | `… ios` — **not built yet** |
 | Linux (dedicated server) | `Plugins/Linux/x86_64/libphysr.so` | `… linux` — **not built yet** |
