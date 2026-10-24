@@ -92,7 +92,7 @@ namespace Game.Tests.EditMode.Features.Bots
             }
 
             Assert.That(states.Count(state => state.name.StartsWith("Death_")), Is.EqualTo(BotAnimatorParams.DeathVariantCount));
-            Assert.That(controller.layers[0].iKPass, Is.True, "WeaponHandIK needs the IK pass");
+            Assert.That(controller.layers[0].iKPass, Is.True, "WeaponHold needs the IK pass");
         }
 
         [TestCaseSource(nameof(Prefabs))]

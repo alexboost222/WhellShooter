@@ -8,9 +8,9 @@ namespace Engine.Runtime
     /// Feeds Unity's loop into the <see cref="Runner"/> and nothing else.
     /// </summary>
     /// <remarks>
-    /// Also switches physics to <see cref="SimulationMode.Script"/> and installs
-    /// <c>Physics.Simulate</c> as the Runner's physics hook. The tick's ordering guarantee is
-    /// only real if Unity isn't also auto-stepping physics behind our back.
+    /// Also switches Unity's PhysX to <see cref="SimulationMode.Script"/> and never steps it: the
+    /// simulation's physics is phys-r, stepped by the Runner's physics hook (Docs/11), so a stray
+    /// collider in a view stays inert instead of being auto-simulated behind our back.
     /// <para>
     /// The fixed step is Unity's own (<c>ProjectSettings/TimeManager</c>); the driver forwards
     /// <c>Time.fixedDeltaTime</c> rather than owning a rate.
@@ -23,16 +23,14 @@ namespace Engine.Runtime
         private Runner _runner;
 
         /// <summary>
-        /// Creates the hidden driver object and takes physics off auto. Called once from Bootstrap.
+        /// Creates the hidden driver object and takes PhysX off auto. Called once from Bootstrap.
         /// </summary>
         public static UnityRunnerDriver Install(Runner runner)
         {
             Guard.ThrowIfNull(runner, nameof(runner));
             Guard.ThrowIfNotMainThread();
 
-            Physics.simulationMode = SimulationMode.Script;
-
-            runner.PhysicsHook = RunnerStep.Create("Physics.Simulate", Physics.Simulate);
+            UnityEngine.Physics.simulationMode = SimulationMode.Script;
 
             // DontDestroyOnLoad only — deliberately NOT HideFlags.DontSave. That flag makes the
             // object survive leaving play mode in the editor, so the next session's Bootstrap

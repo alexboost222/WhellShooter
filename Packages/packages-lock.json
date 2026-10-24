@@ -7,6 +7,19 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
+    "com.physr.engine": {
+      "version": "file:com.physr.engine",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.revenantx.litenetlib": {
+      "version": "2.1.4",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
     "com.scellecs.morpeh": {
       "version": "2024.1.1",
       "depth": 0,

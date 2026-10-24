@@ -53,7 +53,7 @@ namespace Game.Editor.Bots
             var controller = LoadEmptied(PathOf(set));
             AddParameters(controller);
 
-            // The support hand is IK'd onto the weapon (WeaponHandIK).
+            // WeaponHold IKs the support hand onto the weapon.
             var layers = controller.layers;
             layers[0].iKPass = true;
             controller.layers = layers;

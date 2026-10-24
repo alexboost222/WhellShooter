@@ -17,7 +17,7 @@ namespace Engine.Runtime
     /// FixedTick(dt)                        fixed step
     ///   bus.BeginPhase(FixedUpdate)        queues swap; frozen for the phase
     ///   FixedUpdate steps                  simulation
-    ///   PhysicsHook                        Physics.Simulate(dt)
+    ///   PhysicsHook                        PhysicsStep: phys-r world step (Docs/11)
     ///
     /// FrameTick(frameDelta)                every frame
     ///   bus.FlushPush()                    the one push-delivery point
@@ -82,11 +82,22 @@ namespace Engine.Runtime
 
         public int FailureLimit { get; set; } = DefaultFailureLimit;
 
-        /// <summary>Manual physics stepping, installed by the driver. Runs after all FixedUpdate steps.</summary>
+        /// <summary>
+        /// Manual physics stepping (Docs/11), installed once by whoever bridges the physics world.
+        /// Runs after all FixedUpdate steps.
+        /// </summary>
         public IRunnerStep PhysicsHook
         {
             get => _physics?.Step;
-            set => _physics = Wrap(value);
+            set
+            {
+                Guard.ThrowIfNull(value, nameof(value));
+                Guard.ThrowIfNotMainThread();
+                Guard.ThrowIf(_initialized, "The physics hook must be installed before Initialize.");
+                Guard.ThrowIf(_physics != null, $"A physics hook is already installed ({_physics?.Step}).");
+
+                _physics = Wrap(value);
+            }
         }
 
         public void Add(RunnerPhase phase, IRunnerStep step)
