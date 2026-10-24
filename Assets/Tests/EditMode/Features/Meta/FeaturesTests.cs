@@ -3,8 +3,10 @@ using Engine.DI;
 using Engine.Ecs;
 using Engine.Messages;
 using Engine.Runtime;
+using Features.Map.Configs;
 using NUnit.Framework;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Game.Tests.EditMode.Features.Meta
 {
@@ -16,6 +18,7 @@ namespace Game.Tests.EditMode.Features.Meta
     {
         private World _world;
         private Runner _runner;
+        private MapConfig _mapConfig;
 
         [SetUp]
         public void SetUp()
@@ -25,7 +28,8 @@ namespace Game.Tests.EditMode.Features.Meta
             _runner = new Runner(bus);
 
             var container = new Container();
-            var catalog = new ConfigCatalog(new Config[0]);
+            _mapConfig = ScriptableObject.CreateInstance<MapConfig>();
+            var catalog = new ConfigCatalog(new Config[] { _mapConfig });
             container.Register(catalog);
             container.Register(_world);
             container.Register(bus);
@@ -42,6 +46,7 @@ namespace Game.Tests.EditMode.Features.Meta
         public void TearDown()
         {
             _world.Dispose();
+            Object.DestroyImmediate(_mapConfig);
         }
 
         [Test]
