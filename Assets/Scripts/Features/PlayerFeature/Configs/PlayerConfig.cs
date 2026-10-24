@@ -15,6 +15,7 @@ namespace Features.PlayerFeature.Configs
     {
         private const float DefaultLookSensitivity = 0.08f;
         private const float DefaultPitchLimit = 85f;
+        private const float DefaultRespawnDelay = 3f;
 
         [Tooltip("The player's body and camera: a prefab with a CharacterView on the root. " +
                  "Content/Player/Prefabs/Player.")]
@@ -29,11 +30,15 @@ namespace Features.PlayerFeature.Configs
         [Tooltip("How far up or down the view can go, degrees from level.")]
         [SerializeField] private float pitchLimit = DefaultPitchLimit;
 
+        [Tooltip("Seconds dead before the player comes back on the spawn point.")]
+        [SerializeField] private float respawnDelay = DefaultRespawnDelay;
+
         public CharacterView ViewPrefab => viewPrefab;
         public InputActionAsset InputActions => inputActions;
 
-        // Zero is meaningless for both, and is what a field added after the asset was written reads.
+        // Zero is meaningless for these, and is what a field added after the asset was written reads.
         public float LookSensitivity => lookSensitivity > 0f ? lookSensitivity : DefaultLookSensitivity;
         public float PitchLimit => pitchLimit > 0f ? pitchLimit : DefaultPitchLimit;
+        public float RespawnDelay => respawnDelay > 0f ? respawnDelay : DefaultRespawnDelay;
     }
 }

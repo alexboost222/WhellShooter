@@ -18,6 +18,7 @@ namespace Features.PlayerFeature
             Container.Register(new PlayerViewFactory(Container));
 
             AddSystem(RunnerPhase.FixedUpdate, Container.New<PlayerSpawnSystem>());
+            AddSystem(RunnerPhase.FixedUpdate, Container.New<PlayerRespawnSystem>());
 
             AddSystem(RunnerPhase.Update, Container.New<PlayerViewSpawnSystem>());
             AddSystem(RunnerPhase.Update, Container.New<PlayerInputSystem>());

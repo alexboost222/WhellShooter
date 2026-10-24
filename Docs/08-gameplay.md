@@ -351,6 +351,9 @@ side has an edge the other cannot have:
 
 - **Spawn**: the first `PlayerSpawnPoint` in the scene gets a body; a scene without one has no
   player. The view arrives by hydration (has `Player`, lacks `CharacterViewLink`).
+- **Respawn** (`PlayerRespawnSystem`): dead for `PlayerConfig.RespawnDelay` (3 s), then a
+  teleport back to the first spawn point and a `ReviveRequest` — the bots' way. `SampleScene`
+  has one spawn point, in the south team zone.
 - **Input** (`PlayerInputService` + `PlayerInputSystem`): the `Player` map of
   `Settings/InputSystem_Actions` — Move, Look, Jump, Sprint, Attack, **Aim** (right mouse / left
   trigger). Read every frame into `CharacterIntent` and `PlayerLookInput`; reading is separate from
