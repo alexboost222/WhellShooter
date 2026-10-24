@@ -26,7 +26,8 @@
     "com.unity.modules.ui": "1.0.0",
     "com.unity.modules.uielements": "1.0.0",
     "com.unity.modules.umbra": "1.0.0",
-    "com.unity.modules.unitywebrequest": "1.0.0"
+    "com.unity.modules.unitywebrequest": "1.0.0",
+    "com.revenantx.litenetlib": "2.1.4"
   },
   "scopedRegistries": [
     {
@@ -34,6 +35,7 @@
       "url": "https://package.openupm.com",
       "scopes": [
         "com.cysharp.unitask",
+        "com.revenantx.litenetlib",
         "com.scellecs.morpeh"
       ]
     }

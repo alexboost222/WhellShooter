@@ -1,0 +1,173 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 065ec080b03ac43fcb54512d837c1bfd, type: 3}
+  m_Name: MapConfig
+  m_EditorClassIdentifier: Game::Features.Map.Configs.MapConfig
+  _settings:
+    Width: 26
+    Depth: 26
+    CellSize: 2.5
+    StoreyHeight: 3
+    BorderStoreys: 2
+    SpawnZoneDepth: 3
+    TeamSpawns: 4
+    FreeSpawns: 12
+    MinBuildings: 4
+    MaxBuildings: 7
+    MinBuildingSize: 3
+    MaxBuildingSize: 5
+    BuildingGap: 2
+    WindowChance: 0.35
+    ExtraDoorChance: 0.25
+    RoofAccessChance: 0.6
+    CoverDensity: 0.16
+    LowCoverShare: 0.65
+    InteriorPropChance: 0.3
+    DetailDensity: 1.2
+    OutskirtsRings: 4
+  _palette:
+  - Kind: 1
+    Prefabs:
+    - {fileID: 218261247472390261, guid: 14c2043f70fad33459f6bbab2bef8720, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 2
+    Prefabs:
+    - {fileID: 218261247472390261, guid: 14c2043f70fad33459f6bbab2bef8720, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 19
+    Prefabs:
+    - {fileID: 2829464951109967679, guid: defb4cdc6208f004795f0160e8fb04ed, type: 3}
+    YawOffset: 0
+    StripColliders: 1
+  - Kind: 3
+    Prefabs:
+    - {fileID: 1314183909916261615, guid: d6b56504304c325419b598fe3ddb95ed, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 4
+    Prefabs:
+    - {fileID: 1575485029253254693, guid: 312c2475757f3d449bc5791d854de9f8, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 5
+    Prefabs:
+    - {fileID: 1090055365757069019, guid: b00e173b113716a458e7d028b5a22a6e, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 6
+    Prefabs:
+    - {fileID: 1314183909916261615, guid: d6b56504304c325419b598fe3ddb95ed, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 7
+    Prefabs:
+    - {fileID: 4806908438423097214, guid: cab317b0dd5752d4a8f2276080d2a178, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 8
+    Prefabs:
+    - {fileID: 7567519678023432404, guid: 3c3333a360e049e459c73b3ca0afec89, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 9
+    Prefabs:
+    - {fileID: 4932502671990187051, guid: 04f02b7219a7b474198e81b0e197dca9, type: 3}
+    YawOffset: 90
+    StripColliders: 0
+  - Kind: 10
+    Prefabs:
+    - {fileID: 1414887969237499401, guid: 6e3cfe8cda1ce5449b002fd1348507fc, type: 3}
+    - {fileID: 3813589974846415466, guid: 70ffc489c79a14a4caf59aa6cb7d74c2, type: 3}
+    - {fileID: 5444336025286748187, guid: 6e3a10216d721d543bc636786be4e840, type: 3}
+    - {fileID: 1982933260569691131, guid: b7d340da675b88849810a9e27edfbeee, type: 3}
+    - {fileID: 5781694286754335005, guid: d0576d52436bc0c4eb18c7a25ddfcdf3, type: 3}
+    - {fileID: 8752115278972753073, guid: 53e689cdb89924f4eacb5b2f01c0bae0, type: 3}
+    - {fileID: 4072335763191719239, guid: e9d41c6ea1514904dbf94bdc4a614ff4, type: 3}
+    - {fileID: 354099919822039147, guid: 609e7b7606cdb8c4faa1bd70f4a4270f, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 11
+    Prefabs:
+    - {fileID: 2708484438028565609, guid: c561f9c33bd9c714094f061484b3ff94, type: 3}
+    - {fileID: 6551663106355943591, guid: 4938a8fb6b665c24d8d6f44a454494b1, type: 3}
+    - {fileID: 7001493443700725908, guid: dba3a83229940fb4aa5dc5b215b125bd, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 12
+    Prefabs:
+    - {fileID: 4806908438423097214, guid: cab317b0dd5752d4a8f2276080d2a178, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 13
+    Prefabs:
+    - {fileID: 2234192276595900150, guid: 64f4594a7237f5c4bba17f2e2e903b2d, type: 3}
+    - {fileID: 5444336025286748187, guid: 6e3a10216d721d543bc636786be4e840, type: 3}
+    - {fileID: 5781694286754335005, guid: d0576d52436bc0c4eb18c7a25ddfcdf3, type: 3}
+    - {fileID: 354099919822039147, guid: 609e7b7606cdb8c4faa1bd70f4a4270f, type: 3}
+    - {fileID: 4003603189485666069, guid: d2d1684b47b3c254ca653563fce46e21, type: 3}
+    - {fileID: 8752115278972753073, guid: 53e689cdb89924f4eacb5b2f01c0bae0, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 14
+    Prefabs:
+    - {fileID: 472023531885247532, guid: 23d1a7dd3d1c2dd4888ad8183a624ebb, type: 3}
+    - {fileID: 1880130991530675682, guid: 6b5cd3b0c50436a4db8637775a75d6ad, type: 3}
+    - {fileID: 2137760205200772258, guid: 49091280d622b904f96e72e71fe4e877, type: 3}
+    - {fileID: 6131553767378768855, guid: ae12f1ba847c6f74281e7a9a7b0ac7fd, type: 3}
+    - {fileID: 1487672732027152291, guid: 6a549a408565cdf44b5961dccadce139, type: 3}
+    - {fileID: 4492788140253398761, guid: 814fca2ada463e34d8f0430280c2f116, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 15
+    Prefabs:
+    - {fileID: 4322767382158653204, guid: b6ddfbfd1ea362c4bb32e531cb6213cb, type: 3}
+    - {fileID: 7251943758774493481, guid: 5de91b71dc1698644b51f75f1521f6ea, type: 3}
+    - {fileID: 7211606713778384998, guid: cc46b771562eb3e4793292607fc3f72b, type: 3}
+    - {fileID: 8202731649550764293, guid: d67c6edfceeb6fc468ead41526729645, type: 3}
+    - {fileID: 274166536403621637, guid: a2e8aab815313704cb0cc67a12f9bd9c, type: 3}
+    - {fileID: 6509933743064751742, guid: 46e026a974292cb479015cc7012d91ab, type: 3}
+    YawOffset: 0
+    StripColliders: 0
+  - Kind: 16
+    Prefabs:
+    - {fileID: 2308869840000360606, guid: 37c84c10bc09ad14eb8854f863ea5b82, type: 3}
+    - {fileID: 6938313185453466299, guid: 3d7b3b0cc989a8b42b09ddb0ad31ef4d, type: 3}
+    - {fileID: 1792900863588751309, guid: a7366d14de7f1d2428a73c854ca3e093, type: 3}
+    - {fileID: 8498775590324875546, guid: 046fcab6e891a844abfc53b520c8f394, type: 3}
+    - {fileID: 8461432304894645062, guid: 3cddcf39bbe57674fbe747564a932cc8, type: 3}
+    - {fileID: 7424801524984937579, guid: a25dfe0a7afa444499605d59689b3287, type: 3}
+    YawOffset: 0
+    StripColliders: 1
+  - Kind: 17
+    Prefabs:
+    - {fileID: 6791717390955216362, guid: c04794bce9d79814b98d598aa5269b64, type: 3}
+    - {fileID: 4868929504715483026, guid: 661772e08dd28f04098b3402501a8901, type: 3}
+    - {fileID: 8918684442425528394, guid: 22036d00393bb6746ac5e41d671e6289, type: 3}
+    - {fileID: 4793119948349038809, guid: f23eb5d5e8ed26040af442ae0970e8b6, type: 3}
+    - {fileID: 1471158863065593529, guid: 7628db9a16bdf3b4d8aedab590c9f226, type: 3}
+    - {fileID: 192261410605543902, guid: c0ed83dfc21045745a1961016df3cb8a, type: 3}
+    - {fileID: 8574806489409145097, guid: aa35f0d597b8d974ea145589b1b16031, type: 3}
+    - {fileID: 4924576800014285052, guid: 880d11450f7f8be4e84a47d9b20805aa, type: 3}
+    - {fileID: 8294394904559025366, guid: 259516b1bf743f84aba64a77847b9d06, type: 3}
+    - {fileID: 6873938577213127126, guid: a9a82dc7a09f37741916c33cc3483e7c, type: 3}
+    YawOffset: 0
+    StripColliders: 1
+  - Kind: 18
+    Prefabs:
+    - {fileID: 1281693231686000807, guid: 3ec0e1c01c9ca62479f615e4b7590637, type: 3}
+    - {fileID: 7011771666569883076, guid: 1278b4a0c304ae24a8751d099610af62, type: 3}
+    - {fileID: 7794831731080064089, guid: 41973aea592d78d4d859c3633325aad3, type: 3}
+    YawOffset: 0
+    StripColliders: 1
+  _groundMaterial: {fileID: 2100000, guid: d2095bea359c259489550a526cfd4a66, type: 2}

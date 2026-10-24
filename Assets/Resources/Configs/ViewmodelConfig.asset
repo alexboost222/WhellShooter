@@ -20,8 +20,8 @@ MonoBehaviour:
   recoilDamping: 0.45
   cameraFrequency: 6
   cameraDamping: 0.6
-  lookSwayRotation: 0.02
-  lookSwayRoll: 0.012
+  lookSwayRotation: 0.1
+  lookSwayRoll: 0.02
   lookSwayPosition: 0.00008
   maxSwayRotation: 6
   maxSwayPosition: 0.03
@@ -31,7 +31,7 @@ MonoBehaviour:
   maxFallLag: 0.04
   bobFullSpeed: 4.5
   walkStepLength: 1.2
-  sprintStepLength: 1.25
+  sprintStepLength: 1.5
   bobPosition: {x: 0.011, y: 0.008}
   bobRotation: {x: 0.6, y: 0.5, z: 1}
   sprintBobScale: 2.2

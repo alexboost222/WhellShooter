@@ -70,5 +70,29 @@ namespace Engine.Ecs
             FeatureManifest.Note(FeatureFact.Step, $"{phase}: {system.GetType().Name}");
 #endif
         }
+
+        /// <summary>
+        /// Builds a systems group that belongs to <b>no phase</b>, for a step that some other
+        /// mechanism runs — the physics hook's before/after groups (Docs/11). The caller hands the
+        /// returned step to whatever runs it; the Runner initializes it through that owner.
+        /// </summary>
+        protected SystemsGroupStep CreateStep(string name, params ISystem[] systems)
+        {
+            Guard.ThrowIfNullOrEmpty(name, nameof(name));
+            Guard.ThrowIfNull(systems, nameof(systems));
+
+            var group = Container.Resolve<World>().CreateSystemsGroup();
+            for (var i = 0; i < systems.Length; i++)
+            {
+                Guard.ThrowIfNull(systems[i], nameof(systems));
+                group.AddSystem(systems[i]);
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                FeatureManifest.Note(FeatureFact.Step, $"{name}: {systems[i].GetType().Name}");
+#endif
+            }
+
+            return new SystemsGroupStep(group, $"{this}/{name}");
+        }
     }
 }

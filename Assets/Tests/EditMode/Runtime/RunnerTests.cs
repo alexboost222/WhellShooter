@@ -229,6 +229,22 @@ namespace Engine.Tests.EditMode.Runtime
         }
 
         [Test]
+        public void PhysicsHook_InstalledTwice_Throws()
+        {
+            _runner.PhysicsHook = Step("physics");
+
+            Assert.Throws<InvalidOperationException>(() => _runner.PhysicsHook = Step("second"));
+        }
+
+        [Test]
+        public void PhysicsHook_AfterInitialize_Throws()
+        {
+            _runner.Initialize();
+
+            Assert.Throws<InvalidOperationException>(() => _runner.PhysicsHook = Step("late"));
+        }
+
+        [Test]
         public void Add_RejectsNull()
         {
             Assert.Throws<ArgumentNullException>(() => _runner.Add(RunnerPhase.FixedUpdate, null));

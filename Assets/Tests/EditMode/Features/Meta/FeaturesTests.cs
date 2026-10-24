@@ -2,9 +2,11 @@ using Engine.Configs;
 using Engine.DI;
 using Engine.Ecs;
 using Engine.Messages;
+using Engine.Physics;
 using Engine.Runtime;
 using NUnit.Framework;
 using Scellecs.Morpeh;
+using UnityEngine;
 
 namespace Game.Tests.EditMode.Features.Meta
 {
@@ -16,6 +18,7 @@ namespace Game.Tests.EditMode.Features.Meta
     {
         private World _world;
         private Runner _runner;
+        private PhysicsWorld _physics;
 
         [SetUp]
         public void SetUp()
@@ -31,6 +34,7 @@ namespace Game.Tests.EditMode.Features.Meta
             container.Register(_world);
             container.Register(bus);
             container.Register(_runner);
+            _physics = container.Register(new PhysicsWorld(PhysicsWorld.TickRateOf(0.02f)));
             container.Register(new TimeService()).Install(_runner);
             container.AddResolver(new ConfigResolver(catalog));
             container.AddResolver(new StashResolver(_world));
@@ -44,6 +48,7 @@ namespace Game.Tests.EditMode.Features.Meta
         public void TearDown()
         {
             _world.Dispose();
+            _physics.Dispose();
         }
 
         [Test]
